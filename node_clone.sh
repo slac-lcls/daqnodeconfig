@@ -3,7 +3,8 @@
 # NODE CLONE
 ##############
 #
-# This script will clone all the default files for a node into another one
+# This script will clone all the default files for a node into another one by using hte node_copy script with clush
+# run this script in drp-neh-ctl002
 # Author: melchior
 
 PATH_SCRIPTS=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd ) # Path where script is run

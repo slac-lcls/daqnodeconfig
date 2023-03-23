@@ -5,13 +5,14 @@
 #
 # to be used combined with git node default data
 # This script will install into the desired node all the default files for the node
-
+# call this script from drp-neh-ctl002 via a clush command
+# clush --mode root -w drp-name node_install.sh
 # store script path, where the script is run
 # Author: melchior
 
 PATH_SCRIPTS=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 NODE_TYPE1=$(cat /proc/datadev_0 | grep 'Build String' | cut -d ' ' -f 13)
-NODE_TYPE=${NODE_LABEL1::-1} #this is the node type, which is used to activate the corresponding service
+NODE_TYPE=${NODE_TYPE1::-1} #this is the node type, which is used to activate the corresponding service
 HOST=$(echo $(hostname)| cut -d'_' -f 2) # this is the system type, "fee" or "srcf"
 
 input="$PATH_SCRIPTS/file_list.json"  # json file containing the information on the files and directories to be used

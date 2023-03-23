@@ -24,7 +24,7 @@ HOST=$(hostname) # name of the drp node
 input="$PATH_SCRIPTS/file_list.json" # json file conatining information about the files to be copied
 
 NODE_TYPE1=$(cat /proc/datadev_0 | grep 'Build String' | cut -d ' ' -f 13)
-NODE_TYPE=${NODE_LABEL1::-1}
+NODE_TYPE=${NODE_TYPE1::-1}
 
 if [ ! -d "$PATH_SCRIPTS/BACKUP_TEMP/" ]; then
   mkdir "$PATH_SCRIPTS/BACKUP_TEMP/"
@@ -49,9 +49,10 @@ if([ $reverse == 0 ]); then
 		BACKUP_FOLDER=$(jq -r .driver["$i"].install_path "$input") # folder in which should be copied over in the node
 		ACTIVE=$(jq -r .driver["$i"].active "$input") # do I want to copy it?
 
-		echo "$BACKUP_FOLDER/$FILENAME" "$PATH_SCRIPTS/DEFAULTS_TEMP/"
-		cp "$BACKUP_FOLDER/$FILENAME" "$PATH_SCRIPTS/DEFAULTS_TEMP/"
-
+		if [ $ACTIVE == "True" ]; then
+			echo "$BACKUP_FOLDER/$FILENAME" "$PATH_SCRIPTS/DEFAULTS_TEMP/"
+			cp "$BACKUP_FOLDER/$FILENAME" "$PATH_SCRIPTS/DEFAULTS_TEMP/"
+		fi
 	done < "$input"
 else
 	if [ -d "$PATH_SCRIPTS/DEFAULTS_TEMP/" ]; then
@@ -61,9 +62,12 @@ else
 			BACKUP_FOLDER=$(jq -r .driver["$i"].install_path "$input")
 			ACTIVE=$(jq -r .driver["$i"].active "$input")
 			echo "$BACKUP_FOLDER$FILENAME" "$PATH_SCRIPTS/BACKUP_TEMP/$datedir/$HOST/"
-			cp "$BACKUP_FOLDER/$FILENAME" "$PATH_SCRIPTS/BACKUP_TEMP/$datedir/$HOST/"
-			echo "$PATH_SCRIPTS/DEFAULTS_TEMP/$FILENAME" "$BACKUP_FOLDER"
-			cp "$PATH_SCRIPTS/DEFAULTS_TEMP/$FILENAME" "$BACKUP_FOLDER"
+	                cp "$BACKUP_FOLDER/$FILENAME" "$PATH_SCRIPTS/BACKUP_TEMP/$datedir/$HOST/"
+
+			if [ $ACTIVE == "True" ]; then 
+				echo "$PATH_SCRIPTS/DEFAULTS_TEMP/$FILENAME" "$BACKUP_FOLDER"
+				cp "$PATH_SCRIPTS/DEFAULTS_TEMP/$FILENAME" "$BACKUP_FOLDER"
+			fi
 		done < "$input"
 
                 # make services executable

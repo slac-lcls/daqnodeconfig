@@ -1,0 +1,10 @@
+{
+"driver":[
+	{"driver_name":"datadev.ko","install_path":"/usr/local/sbin/", "active":"True"},
+ 	{"driver_name":"kcuSim","install_path":"/usr/local/sbin/", "active":"True"},
+	{"driver_name":"kcuStatus","install_path":"/usr/local/sbin/", "active":"True"},
+	{"driver_name":"kcu.service","install_path":"/usr/lib/systemd/system/", "active":"True"},
+	{"driver_name":"tdetsim.service","install_path":"/usr/lib/systemd/system/", "active":"True"},
+	{"driver_name":"sysctl.conf","install_path":"/etc/","active":"True"}
+	]
+}
