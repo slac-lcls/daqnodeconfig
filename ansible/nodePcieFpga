@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+#-----------------------------------------------------------------------------
+# Title      : BPI/SPIx4/SPIx8 Prom Update
+#-----------------------------------------------------------------------------
+# This file is part of the 'axi-pcie-core'. It is subject to 
+# the license terms in the LICENSE.txt file found in the top-level directory 
+# of this distribution and at: 
+#    https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
+# No part of the 'axi-pcie-core', including this file, may be 
+# copied, modified, propagated, or distributed except according to the terms 
+# contained in the LICENSE.txt file.
+#-----------------------------------------------------------------------------
+
+import pyrogue as pr
+import os
+import importlib
+
+baseDir = os.path.dirname(os.path.realpath(__file__))
+
+print(f"Basedir = {baseDir}")
+
+# First see if surf and axipcie are already in the python path
+try:
+    import surf
+    import axipcie
+
+# Otherwise assume it is relative in a standard development directory structure
+except:
+    pr.addLibraryPath(baseDir + '/../python')
+    pr.addLibraryPath(baseDir + '/../../surf/python')
+
+import sys
+import glob
+import argparse
+import rogue.hardware.axi
+import axipcie as pcie
+from collections import OrderedDict as odict
+
+if __name__ == "__main__": 
+
+    # Set the argument parser
+    parser = argparse.ArgumentParser()
+
+    # Add arguments
+    parser.add_argument(
+        "--dev", 
+        type     = str,
+        required = False,
+        default  = "/dev/datadev_0",
+        help     = "path to device",
+    ) 
+    parser.add_argument(
+        "--filename", 
+        type     = str,
+        default  = None,
+        required = False,
+        help     = "Image filename to be used",
+    )
+
+    parser.add_argument(
+        "--type", 
+        type     = str,
+        default  = None,
+        required = False,
+        help     = "prom type",
+    )  
+    parser.add_argument(
+        "--check", 
+        type     = bool,
+        default  = False,
+        required = False,
+        help     = "check if node needs firmware upgrade",
+    )  
+    # Get the arguments
+    args = parser.parse_args()
+
+    if args.filename is None:
+        print("\n No image filename provided, use --filename\n")
+        parser.print_help()
+        exit()
+
+    # Set base
+    base = pr.Root(name='PcieTop',description='',pollEn=False)
+
+    # Create the stream interface
+    memMap = rogue.hardware.axi.AxiMemMap(args.dev)
+
+    # Add Base Device
+    base.add(pcie.AxiPcieCore(
+        memBase = memMap,
+        useBpi  = True,
+        useSpi  = True,
+    ))
+
+    # Start the system
+    base.start()
+
+    # Read all the variables
+    base.ReadAll()
+
+    # Create useful pointers
+    AxiVersion = base.AxiPcieCore.AxiVersion
+
+    if args.type is None:
+        promType   = AxiVersion.BOOT_PROM_G.getDisp()
+    else:
+        promType   = args.type
+
+    # Case on PROM type
+    if (promType == 'BPI'):
+        PROM_PRI = base.AxiPcieCore.AxiMicronMt28ew
+    elif (promType == 'SPIx8') or (promType == 'SPIx4'):
+        PROM_PRI = base.AxiPcieCore.AxiMicronN25Q[0]
+        if (promType == 'SPIx8'):
+            PROM_SEC = base.AxiPcieCore.AxiMicronN25Q[1]
+    else:
+        raise ValueError('Invalid promType')
+
+    # Printout Current AxiVersion status
+    print('#########################################')
+    print('Current Firmware Loaded on the PCIe card:')
+    print('#########################################')
+    AxiVersion.printStatus()
+    print('#########################################')
+
+
+    curImageName = AxiVersion.ImageName.get()
+
+    pri=args.filename
+    sec=pri.replace("primary","secondary")        
+     
+    print(f'current {curImageName} {format(AxiVersion.FpgaVersion.get(), "02x")}')
+    print(f'new {os.path.basename(pri)}')
+    if(f"{format(AxiVersion.FpgaVersion.get(), '02x')}" in os.path.basename(pri)) and  (curImageName in os.path.basename(pri)):
+        print("Firmware already installed ")
+    else:    
+        
+        if not args.check:
+            print("Installing new firmware")
+            PROM_PRI.LoadMcsFile(pri)  
+
+	# Update the programing done flag
+            progDone = PROM_PRI._progDone
+
+	# Check for secondary PROM
+            if (promType == 'SPIx8'):
+	    # Check if the primary MCS failed
+                if PROM_PRI._progDone: 
+	        # Load the secondary MCS file
+                    PROM_SEC.LoadMcsFile(sec)  
+	    # Update the programing done flag
+                progDone = PROM_PRI._progDone and PROM_SEC._progDone
+
+	# Check if programming was successful
+                if (progDone):
+                    print('\nReloading FPGA firmware from PROM ....')
+                    AxiVersion.FpgaReload()
+                    print('\nPlease reboot the computer')
+                else:
+                    print('Failed to program FPGA')
+        else:
+            print("firmware is different")
+
+    # Close out
+    base.stop()
+    exit()

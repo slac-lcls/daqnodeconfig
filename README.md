@@ -1,16 +1,42 @@
-# daqnodeconfig - Scripts for installing and updating nodes for DAQ use
+# daqnodeconfig - Ansible Scripts for installing and updating nodes for DAQ use
+file tree:
 
-- node_install uses the folder where the script is to find the files to install them (copy and setup)
-- node_copy copies the files from and to (need to be launched a second time)
-- node_clone uses node_copy to perform a copy from and to another node
-- drp-status uses clush on ctl002 (no need to be on ctl002) to read the Build String variable from both datadev_0 and _1  
+>ansible
+  HSD
+    HSD_driver_update.yml         #uses kcu.service or tdetsim.service to install driver
+    HSD_file_chmod.yml            #in case permitions are wrong
+    HSD_file_update.yml           #updates files in each HSD node
+    HSD_firmware_update.yml       #updates drp firmware
+    HSD_pcie_firmware_update.yml  #updates daq-tmo-hsd-01 cards firmware (make sure to kinit)
+  
+  ansible.cfg                     #ansible configuration file
+  hosts                           #ansible file defining hosts
+  nodePcieFpga                    #modified firmware update file version copy in pgp-pcie-apps/firmware/submodules/axi-pcie-core/scripts/ and create link in pgp-pcie-apps/software/scripts or use default in "cd_cameralink" variable
 
-node_copy also performs the install if in the direction "to" the node.
+>shared_files
+  datadev.ko_fee            # driver for FEE drp nodes
+  datadev.ko_srcf           # driver for srcf nodes
+  kcu_hsd.service           # service for HSD nodes
+  kcu.service               # service for other nodes
+  kcuSim                    # application for testing kcu
+  kcuStatus                 # application for testing kcu
+  sysctl.conf               # file needed to define system conditions
+  tdetsim.service           # service for tdet drp nodes
+  tdetsim.service_high      # service for high rate tdet drp nodes
+  tdetsim.service_slow      # service for slow rate tdet drp nodes
 
-## Example
+>status
+  find_hsd.sh               # creates a file HSD_drps.txt listing all drps having DrpPgpIlv in BuildString
+  firmware_String.sh        # creates a file BuildString.txt listing all drp BuildString values
+  md5sum_datadev.sh         # creates a file md5_datadev.txt listing the hash of every datadev.ko in srcf
 
-The following prepares <node(s)> when run from ctl002 in NEH.
 
-```
-clush --mode sudo -w <node/range> ~/lclsii/daq/daqnodeconfig/node_install.sh t
-```
+In order to run ansible:
+- activate conda
+- conda activate /cds/sw/ds/dm/conda/envs/adm-0.2.0
+- in ansible folder run:
+  ansible-playbook HSD/HSD_XXXXX.yml -K 
+  change XXXXX with desired script, -K if sudo password is required
+
+
+

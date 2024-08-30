@@ -1,9 +1,0 @@
-cameralink-gateway(software)		v7.11.0
-lcls2-epix-hr-pcie(software)		v1.4.0
-datadev.ko(driver)              	v5.17.3 *
-ClinkKcu1500Pgp2b/FEB       		0x7110000
-DrpPgpIlv				0x4000100
-DrpTDet					0x4000200
-Lcls2EpixHrXilinxKcu1500Pgp4_6Gbps	0x1040000
-XilinxKcu1500Pgp4_6Gbps			0x2010000
-
