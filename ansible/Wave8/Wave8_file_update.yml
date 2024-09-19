@@ -1,5 +1,5 @@
 ---
-- hosts: "hsd_drp"    #DO NOT USE "all", otherwise every computer in the network will be used
+- hosts: "wave8_drp"    #DO NOT USE "all", otherwise every computer in the network will be used
   become: true        #in order to run as root use the "-K" option in the command line
   gather_facts: false
   strategy: free      #Allows to run in parallel on several nodes
@@ -10,7 +10,7 @@
     - {src: '../../shared_files/datadev.ko_srcf',      dest: '/usr/local/sbin/datadev.ko'}
     - {src: '../../shared_files/kcuSim',               dest: '/usr/local/sbin/kcuSim'}
     - {src: '../../shared_files/kcuStatus',            dest: '/usr/local/sbin/kcuStatus'}
-    - {src: '../../shared_files/kcu_hsd.service',      dest: '/usr/lib/systemd/system/kcu.service'}
+    - {src: '../../shared_files/kcu.service',      dest: '/usr/lib/systemd/system/kcu.service'}
     - {src: '../../shared_files/sysctl.conf',          dest: '/etc/sysctl.conf'}
 
   tasks:

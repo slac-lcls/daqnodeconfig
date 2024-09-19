@@ -1,5 +1,5 @@
 ---
-- hosts: "hsd_drp"     #DO NOT USE "all", otherwise every computer in the network will be used
+- hosts: "wave8_drp"     #DO NOT USE "all", otherwise every computer in the network will be used
   become: true         #in order to run as root use the "-K" option in the command line
   gather_facts: false
   strategy: free

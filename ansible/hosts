@@ -2,10 +2,10 @@
 drp-srcf-cmp038
 
 [wave8_drp]
-drp-srcf-cmp040
+drp-srcf-cmp051
 
 [camlink_drp]
-drp-srcf-cmp041
+drp-srcf-cmp052
 
 [hsd_drp]
 drp-srcf-cmp005                    
@@ -17,7 +17,6 @@ drp-srcf-cmp021
 drp-srcf-cmp022           
 drp-srcf-cmp023           
 drp-srcf-cmp024           
-drp-srcf-cmp042           
 drp-srcf-cmp046           
 drp-srcf-cmp048           
 drp-srcf-cmp049           

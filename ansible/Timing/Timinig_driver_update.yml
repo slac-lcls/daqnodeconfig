@@ -4,7 +4,7 @@
   gather_facts: false
   strategy: free
   ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
-  check_mode: false     #modify to false, this is a failsafe
+  check_mode: true     #modify to false, this is a failsafe
   
   tasks:
    - name: "install driver"

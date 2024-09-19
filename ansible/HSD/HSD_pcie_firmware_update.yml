@@ -5,7 +5,7 @@
   become: false       #do not use root
   gather_facts: false
   ignore_errors: true #needs to be true, oherwise the program stops when an error occurs
-  check_mode: true    #failsafe, set to false if you want to run it
+  check_mode: false    #failsafe, set to false if you want to run it
   serial: 1
   vars:
     filepath:      "~weaver/mcs/hsd/"
