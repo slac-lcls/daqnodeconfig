@@ -6,17 +6,17 @@
   check_mode: false    #failsafe, set to false if you want to run it
   serial: 1
   vars:
-    filepath:      "~weaver/mcs/drp/"
-    firmw:         "XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819125301-weaver-fe20e21_primary.mcs"
+    filepath:      "~psrel/git/daqnodeconfig/mcs/drp/"
+    firmw:         "XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff_*.mcs_primary.mcs"
     setup_source:  "source ~tmoopr/daq/setup_env.sh"
-    cd_cameralink: "cd ~melchior/git/pgp-pcie-apps/software/"
+    cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
     
 
   tasks:
   - name: "update firmware"
     shell:
     args:
-      cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/datadev_1  --filename {{ filepath }}{{ firmw }} '" </dev/null >/dev/null 2>&1 &
+      cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/datadev_0  --filename {{ filepath }}{{ firmw }} '" </dev/null >/dev/null 2>&1 &
       executable: /bin/bash  
 
 

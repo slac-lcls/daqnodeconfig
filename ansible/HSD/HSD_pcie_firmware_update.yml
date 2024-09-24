@@ -8,7 +8,7 @@
   check_mode: false    #failsafe, set to false if you want to run it
   serial: 1
   vars:
-    filepath:      "~weaver/mcs/hsd/"
+    filepath:      "~psrel/git/daqnodeconfig/mcs/hsd/"
     firmw:         "hsd_6400m-0x06000000-20240814101606-weaver-ae24264.mcs"
     setup_source:  "source ~tmoopr/daq/setup_env.sh"
     cd_cameralink: "cd ~melchior/git/pgp-pcie-apps/software/"

@@ -6,10 +6,10 @@
   check_mode: false    #failsafe, set to false if you want to run it
   serial: 1
   vars:
-    filepath:      "~weaver/mcs/drp/"
+    filepath:      "~psrel/git/daqnodeconfig/mcs/drp/"
     firmw:         "DrpPgpIlv-0x05000000-20240814110544-weaver-88fa79c_primary.mcs"
     setup_source:  "source ~tmoopr/daq/setup_env.sh"
-    cd_cameralink: "cd ~melchior/git/pgp-pcie-apps/software/"
+    cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
     
 
   tasks:
