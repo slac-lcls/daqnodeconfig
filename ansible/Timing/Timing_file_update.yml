@@ -7,11 +7,11 @@
   check_mode: true    #modify to false, this is a failsafe
   vars:
     timing_files: 
-    - {src: '../../shared_files/datadev.ko_srcf',      dest: '/usr/local/sbin/datadev.ko'}
-    - {src: '../../shared_files/kcuSim',               dest: '/usr/local/sbin/kcuSim'}
-    - {src: '../../shared_files/kcuStatus',            dest: '/usr/local/sbin/kcuStatus'}
-    - {src: '../../shared_files/tdetsim.service',      dest: '/usr/lib/systemd/system/kcu.service'}
-    - {src: '../../shared_files/sysctl.conf',          dest: '/etc/sysctl.conf'}
+    - {src: '../../shared_files/datadev.ko_srcf',      dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../../shared_files/kcuSim',               dest: '/usr/local/sbin/kcuSim',          mode: a+x}
+    - {src: '../../shared_files/kcuStatus',            dest: '/usr/local/sbin/kcuStatus',          mode: a+x}
+    - {src: '../../shared_files/tdetsim.service',      dest: '/usr/lib/systemd/system/kcu.service',          mode: a}
+    - {src: '../../shared_files/sysctl.conf',          dest: '/etc/sysctl.conf',          mode: a}
 
   tasks:
 
@@ -20,7 +20,7 @@
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"
       backup: true
-      mode: a+x
+      mode: "{{ item.mode }}"
     with_items: "{{ timing_files }}" 
 
     
