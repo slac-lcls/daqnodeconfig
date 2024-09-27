@@ -1,5 +1,5 @@
-[timing_high]
-drp-srcf-cmp038
+[timing]
+drp-srcf-cmp054
 
 [wave8_drp]
 drp-srcf-cmp051
@@ -21,6 +21,8 @@ drp-srcf-cmp046
 drp-srcf-cmp048           
 drp-srcf-cmp049           
 drp-srcf-cmp050           
+drp-srcf-cmp053
 
 [tmo_hsd]
 daq-tmo-hsd-01
+
