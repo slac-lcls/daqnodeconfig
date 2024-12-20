@@ -1,0 +1,67 @@
+---
+# uploads the files in the node if not the same
+- name: load files
+  become: false
+  ignore_errors: true
+  check_mode: false
+  register: artifacts_copy_status
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}" 
+    mode: "{{ item.mode }}"
+  with_items: "{{ files_name }}"
+
+
+- name: update drivers
+  become: true         #in order to run as root use the "-K" option in the command line
+  ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
+  check_mode: false     #modify to false, this is a failsafe
+  ansible.builtin.shell: |
+    rmmod datadev
+    systemctl disable irqbalance.service
+    systemctl daemon-reload 
+    systemctl start "{{ service }}".service
+    systemctl enable "{{ service }}".service
+  when: artifacts_copy_status.changed #if a file has changed then install drivers
+
+#Check which datadev to use
+- name: Check if datadev_1 exists
+  stat:
+    path: /proc/datadev_1
+  register: stat_result
+
+- name: use datadev_1
+  set_fact:
+    datadev: datadev_1
+  when: stat_result.stat.exists
+
+- name: use datadev_0
+  set_fact:  
+    datadev: datadev_0
+  when: not stat_result.stat.exists
+  
+ #updates the firmware, timeout 5 minutes 
+- name: update firmware
+  become: false       #do not use root
+  ignore_errors: true
+  check_mode: false    #failsafe, set to false if you want to run it
+  vars:
+    filepath:      "~psrel/git/daqnodeconfig/mcs/drp/"
+    setup_source:  "source ~tmoopr/daq/setup_env.sh"
+    cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
+  register: ps
+  async: 300  # wait up to 5 minutes s
+  poll: 5    # poll every 5 seconds
+  changed_when: false
+  shell:
+  args:
+    #cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs '" </dev/null >/dev/null 2>&1 &
+    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs'
+    executable: /bin/bash  
+  
+#do not show changes if no firmware has been updated
+- name: result firmware update
+  ansible.builtin.debug: 
+    var=ps.stdout_lines
+  changed_when: "'Firmware already' in ps.stdout_lines"
+
