@@ -32,22 +32,22 @@
   roles: 
   - {role: ./roles/drp_update} 
 
-- hosts: camera_drp
+#- hosts: camera_drp
   
-  vars: 
-    files_name: 
-    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
-    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
-    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
-    - {src: '../files/kcu.service',             dest: '/usr/lib/systemd/system/kcu.service', mode: a}
-    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a}
+#  vars: 
+#    files_name: 
+#    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+#    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
+#    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
+#    - {src: '../files/kcu.service',             dest: '/usr/lib/systemd/system/kcu.service', mode: a}
+#    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a}
     
     #firmware: DrpPgpIlv-0x05000000-20240814110544-weaver-88fa79c_primary
-    firmware: Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7_primary
-    service: kcu
+#    firmware: Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7_primary
+#    service: kcu
     
-  roles: 
-  - {role: ./roles/drp_update} 
+#  roles: 
+#  - {role: ./roles/drp_update} 
 
 - hosts: timing_drp
   
@@ -81,6 +81,24 @@
     #DrpTDet-0x04000300-20240129134456-weaver-e052f59_primary
     
     service: tdetsim
+    
+  roles: 
+  - {role: ./roles/drp_update} 
+
+  
+- hosts: epix_drp
+  
+  vars: 
+    files_name: 
+    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+    - {src: '../files/kcu_epix.service',        dest: '/usr/lib/systemd/system/kcu.service',     mode: a}
+    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a}
+    
+    firmware: XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819162750-weaver-02517bc_primary
+    #DrpTDet-0x04000300-20240129134456-weaver-e052f59_primary
+    service: kcu
     
   roles: 
   - {role: ./roles/drp_update} 

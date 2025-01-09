@@ -46,7 +46,7 @@
   ignore_errors: true
   check_mode: false    #failsafe, set to false if you want to run it
   vars:
-    filepath:      "~psrel/git/daqnodeconfig/mcs/drp/"
+    filepath:      "~psrel/mcs/drp/"
     setup_source:  "source ~tmoopr/daq/setup_env.sh"
     cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
   register: ps
