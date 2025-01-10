@@ -1,7 +1,7 @@
 ---
 # uploads the files in the node if not the same
 - name: load files
-  become: false
+  become: true
   ignore_errors: true
   check_mode: false
   register: artifacts_copy_status
