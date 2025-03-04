@@ -50,12 +50,12 @@
     setup_source:  "source ~tmoopr/daq/setup_env.sh"
     cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
   register: ps
-  async: 300  # wait up to 5 minutes s
+  async: 600  # wait up to 10 minutes s
   poll: 5    # poll every 5 seconds
   changed_when: false
   shell:
   args:
-    #cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs '" </dev/null >/dev/null 2>&1 &
+    #cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ firmware }}.mcs '" </dev/null >/dev/null 2>&1 &
     cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs'
     executable: /bin/bash  
   
