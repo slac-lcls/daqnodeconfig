@@ -1,6 +1,7 @@
 [timing_drp]
-drp-srcf-cmp053
-drp-srcf-cmp037
+drp-srcf-cmp014
+drp-srcf-cmp041
+drp-srcf-cmp042
 
 [hightiming_drp]
 drp-srcf-cmp054
@@ -14,11 +15,16 @@ drp-srcf-cmp052
 [camera_drp]
 drp-srcf-cmp053 
 
-[epix_drp]
+[epixuhr_drp]
 drp-srcf-cmp055
+
+[epix100_drp]
+drp-srcf-cmp031
+drp-srcf-cmp040
 
 [Jungfrau_drp]
 drp-srcf-cmp032
 drp-srcf-cmp033
-drp-srcf-cmp034
 drp-srcf-cmp035
+drp-srcf-cmp038
+drp-srcf-cmp039

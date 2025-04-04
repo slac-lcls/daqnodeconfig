@@ -48,21 +48,21 @@
 #  roles: 
 #  - {role: ./roles/drp_update} 
 
-# - hosts: timing_drp
+- hosts: timing_drp
   
-#   vars: 
-#     files_name: 
-#     - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
-#     - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
-#     - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-#     - {src: '../files/tdetsim.service',         dest: '/usr/lib/systemd/system/tdetsim.service', mode: a}
-#     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a}
-    
-#     firmware: DrpTDet-0x05000000-20240905155809-weaver-4a82bda_primary
-#     service: tdetsim
-    
-#   roles: 
-#   - {role: ./roles/drp_update} 
+  vars: 
+    files_name: 
+    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+    - {src: '../files/tdetsim.service',         dest: '/usr/lib/systemd/system/tdetsim.service', mode: a}
+    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a}
+  
+    firmware: DrpTDet-0x05000000-20240905155809-weaver-4a82bda_primary
+    service: tdetsim
+  
+  roles: 
+  - {role: ./roles/drp_update} 
 
 
 # - hosts: hightiming_drp
@@ -83,7 +83,7 @@
 #   - {role: ./roles/drp_update} 
 
   
-# - hosts: epix_drp
+# - hosts: epixuhr_drp
   
 #   vars: 
 #   files_name: 
@@ -100,6 +100,21 @@
 #   - {role: ./roles/drp_update} 
 
 
+- hosts: epix100_drp
+
+  vars: 
+    files_name: 
+    - {src: '../files/datadev.ko_srcf.6.6.1',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/kcu_epix100.service',        dest: '/usr/lib/systemd/system/kcu.service',     mode: a}
+    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a}
+  
+    firmware: Lcls2EpixHrXilinxKcu1500Pgp4_6Gbps-0x03020000-20250402173813-ruckman-68578d8_primary
+    service: kcu
+  
+  roles: 
+  - {role: ./roles/drp_update} 
+
+
 - hosts: Jungfrau_drp
   
   vars: 
@@ -110,7 +125,7 @@
     - {src: '../files/kcu_jung.service',        dest: '/usr/lib/systemd/system/kcu.service',     mode: a}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a}
     
-    firmware: Lcls2XilinxKcu1500Udp_10GbE-0x03010000-20250227102842-ruckman-9d02f81_primary
+    firmware: Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731_primary
     service: kcu
     
     
