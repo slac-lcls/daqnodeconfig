@@ -1,0 +1,407 @@
+2025-03-17 13:06:53,367 p=18095 u=melchior n=ansible | PLAY [wave8_drp] *****************************************************************************************************************************************************
+2025-03-17 13:06:53,408 p=18095 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 13:07:03,462 p=18095 u=melchior n=ansible | fatal: [drp-srcf-cmp056]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: ssh: connect to host drp-srcf-cmp056 port 22: Connection timed out", "unreachable": true}
+2025-03-17 13:07:03,464 p=18095 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 13:07:03,471 p=18095 u=melchior n=ansible | drp-srcf-cmp056            : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+2025-03-17 13:07:35,197 p=18201 u=melchior n=ansible | PLAY [wave8_drp] *****************************************************************************************************************************************************
+2025-03-17 13:07:35,238 p=18201 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 13:07:45,277 p=18201 u=melchior n=ansible | fatal: [drp-srcf-cmp056]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: ssh: connect to host drp-srcf-cmp056 port 22: Connection timed out", "unreachable": true}
+2025-03-17 13:07:45,279 p=18201 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 13:07:45,282 p=18201 u=melchior n=ansible | drp-srcf-cmp056            : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+2025-03-17 14:47:21,961 p=10860 u=melchior n=ansible | ERROR! 'files_name' is not a valid attribute for a Play
+
+The error appears to be in '/cds/home/m/melchior/git/default_node/daqnodeconfig/ansible/srcf_update.yml': line 86, column 3, but may
+be elsewhere in the file depending on the exact syntax problem.
+
+The offending line appears to be:
+
+
+- hosts: epix_drp
+  ^ here
+
+2025-03-17 14:47:58,002 p=10919 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-17 14:47:58,059 p=10919 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 14:48:06,175 p=10919 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 14:48:06,224 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-17 14:48:07,051 p=10919 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"msg": "Missing sudo password"}
+2025-03-17 14:48:07,051 p=10919 u=melchior n=ansible | ...ignoring
+2025-03-17 14:48:07,075 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-17 14:48:07,091 p=10919 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"msg": "The conditional check 'artifacts_copy_status.changed' failed. The error was: error while evaluating conditional (artifacts_copy_status.changed): 'dict object' has no attribute 'changed'\n\nThe error appears to be in '/cds/home/m/melchior/git/default_node/daqnodeconfig/ansible/roles/drp_update/tasks/main.yml': line 16, column 3, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n\n- name: update drivers\n  ^ here\n"}
+2025-03-17 14:48:07,091 p=10919 u=melchior n=ansible | ...ignoring
+2025-03-17 14:48:07,118 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-17 14:48:07,856 p=10919 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 14:48:07,885 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-17 14:48:07,899 p=10919 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 14:48:07,921 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-17 14:48:07,941 p=10919 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 14:48:07,960 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : update firmware executable=/bin/bash, _raw_params={{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs] ***
+2025-03-17 14:48:07,980 p=10919 u=melchior n=ansible | An exception occurred during task execution. To see the full traceback, use -vvv. The error was: NoneType: None
+2025-03-17 14:48:07,981 p=10919 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"changed": false, "msg": "check mode and async cannot be used on same task."}
+2025-03-17 14:48:07,989 p=10919 u=melchior n=ansible | ...ignoring
+2025-03-17 14:48:08,014 p=10919 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-17 14:48:08,035 p=10919 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {
+    "changed_when_result": "The conditional check ''Firmware already' in ps.stdout_lines' failed. The error was: error while evaluating conditional ('Firmware already' in ps.stdout_lines): 'dict object' has no attribute 'stdout_lines'",
+    "ps.stdout_lines": "VARIABLE IS NOT DEFINED!"
+}
+2025-03-17 14:48:08,037 p=10919 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 14:48:08,040 p=10919 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=3   
+2025-03-17 14:49:13,453 p=12132 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-17 14:49:13,486 p=12132 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 14:49:13,509 p=12132 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"msg": "to use the 'ssh' connection type with passwords or pkcs11_provider, you must install the sshpass program"}
+2025-03-17 14:49:13,510 p=12132 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 14:49:13,514 p=12132 u=melchior n=ansible | drp-srcf-cmp055            : ok=0    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-03-17 14:49:43,992 p=12277 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-17 14:49:44,013 p=12277 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 14:49:48,589 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 14:49:48,693 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-17 14:49:58,272 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-17 14:50:07,252 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-17 14:50:16,252 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-17 14:50:25,266 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-17 14:50:34,253 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-17 14:50:34,281 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-17 14:50:34,298 p=12277 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 14:50:34,318 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-17 14:50:34,923 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 14:50:34,941 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-17 14:50:34,955 p=12277 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 14:50:34,974 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-17 14:50:34,992 p=12277 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 14:50:35,011 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : update firmware executable=/bin/bash, _raw_params={{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs] ***
+2025-03-17 14:50:35,031 p=12277 u=melchior n=ansible | An exception occurred during task execution. To see the full traceback, use -vvv. The error was: NoneType: None
+2025-03-17 14:50:35,032 p=12277 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"changed": false, "msg": "check mode and async cannot be used on same task."}
+2025-03-17 14:50:35,033 p=12277 u=melchior n=ansible | ...ignoring
+2025-03-17 14:50:35,054 p=12277 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-17 14:50:35,075 p=12277 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {
+    "changed_when_result": "The conditional check ''Firmware already' in ps.stdout_lines' failed. The error was: error while evaluating conditional ('Firmware already' in ps.stdout_lines): 'dict object' has no attribute 'stdout_lines'",
+    "ps.stdout_lines": "VARIABLE IS NOT DEFINED!"
+}
+2025-03-17 14:50:35,076 p=12277 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 14:50:35,122 p=12277 u=melchior n=ansible | drp-srcf-cmp055            : ok=5    changed=0    unreachable=0    failed=1    skipped=2    rescued=0    ignored=1   
+2025-03-17 15:00:17,481 p=15182 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-17 15:00:17,532 p=15182 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 15:00:22,953 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 15:00:23,073 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-17 15:00:33,384 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-17 15:00:42,886 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-17 15:00:53,554 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-17 15:01:02,825 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-17 15:01:12,435 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-17 15:01:12,515 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-17 15:01:12,532 p=15182 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 15:01:12,592 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-17 15:01:13,313 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 15:01:13,334 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-17 15:01:13,349 p=15182 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 15:01:13,369 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-17 15:01:13,387 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 15:01:13,410 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : update firmware executable=/bin/bash, _raw_params={{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs] ***
+2025-03-17 15:01:21,368 p=15182 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "609656372108.21389", "changed": false, "finished": 1, "msg": "could not find job", "results_file": "/cds/home/m/melchior/.ansible_async/609656372108.21389", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-17 15:01:21,369 p=15182 u=melchior n=ansible | ...ignoring
+2025-03-17 15:01:21,506 p=15182 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-17 15:01:21,534 p=15182 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-17 15:01:21,595 p=15182 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 15:01:21,596 p=15182 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-03-17 15:03:12,310 p=15944 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-17 15:03:12,352 p=15944 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-17 15:03:18,661 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 15:03:18,745 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-17 15:03:28,771 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-17 15:03:38,250 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-17 15:03:47,699 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-17 15:03:57,413 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-17 15:04:06,980 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-17 15:04:07,012 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-17 15:04:07,027 p=15944 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 15:04:07,048 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-17 15:04:07,958 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 15:04:07,983 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-17 15:04:07,998 p=15944 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-17 15:04:08,021 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-17 15:04:08,040 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-17 15:04:08,061 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : update firmware args={'cmd': '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs', 'executable': '/bin/bash'}] ***
+2025-03-17 15:04:16,715 p=15944 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "841958744519.23106", "changed": false, "finished": 1, "msg": "Unsupported parameters for (ansible.legacy.command) module: args. Supported parameters include: warn, executable, chdir, strip_empty_ends, _raw_params, removes, argv, creates, _uses_shell, stdin_add_newline, stdin.", "results_file": "/cds/home/m/melchior/.ansible_async/841958744519.23106", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-17 15:04:16,716 p=15944 u=melchior n=ansible | ...ignoring
+2025-03-17 15:04:16,755 p=15944 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-17 15:04:16,784 p=15944 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-17 15:04:16,844 p=15944 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-17 15:04:16,844 p=15944 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-03-18 09:37:57,277 p=21259 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 09:37:57,343 p=21259 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 09:38:02,912 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 09:38:02,955 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 09:38:12,887 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-18 09:38:22,276 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-18 09:38:31,722 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-18 09:38:41,219 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-18 09:38:50,724 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-18 09:38:50,762 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 09:38:50,780 p=21259 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 09:38:50,802 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 09:38:51,686 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 09:38:51,705 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 09:38:51,720 p=21259 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 09:38:51,739 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 09:38:51,759 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 09:38:51,783 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : update firmware args={'cmd': '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs', 'executable': '/bin/bash'}] ***
+2025-03-18 09:39:00,137 p=21259 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "818512806144.50155", "changed": false, "finished": 1, "msg": "Unsupported parameters for (ansible.legacy.command) module: args. Supported parameters include: warn, executable, chdir, strip_empty_ends, _raw_params, removes, argv, creates, _uses_shell, stdin_add_newline, stdin.", "results_file": "/cds/home/m/melchior/.ansible_async/818512806144.50155", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-18 09:39:00,150 p=21259 u=melchior n=ansible | ...ignoring
+2025-03-18 09:39:00,233 p=21259 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 09:39:00,259 p=21259 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-18 09:39:00,314 p=21259 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 09:39:00,314 p=21259 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-03-18 10:08:11,019 p=31534 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 10:08:11,183 p=31534 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 10:08:16,393 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:08:16,433 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 10:08:26,536 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-18 10:08:36,221 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-18 10:08:45,665 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-18 10:08:55,098 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-18 10:09:04,706 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-18 10:09:04,752 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 10:09:04,770 p=31534 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:09:04,797 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 10:09:05,489 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:09:05,511 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 10:09:05,525 p=31534 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:09:05,546 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 10:09:05,565 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:09:05,586 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : update firmware args=None, executable=/bin/bash, _raw_params={{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs] ***
+2025-03-18 10:09:13,962 p=31534 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "423867509392.56404", "changed": false, "finished": 1, "msg": "Unsupported parameters for (ansible.legacy.command) module: args. Supported parameters include: warn, executable, chdir, strip_empty_ends, _raw_params, removes, argv, creates, _uses_shell, stdin_add_newline, stdin.", "results_file": "/cds/home/m/melchior/.ansible_async/423867509392.56404", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-18 10:09:13,963 p=31534 u=melchior n=ansible | ...ignoring
+2025-03-18 10:09:13,992 p=31534 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 10:09:14,018 p=31534 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-18 10:09:14,077 p=31534 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 10:09:14,077 p=31534 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-03-18 10:11:28,059 p=32549 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 10:11:28,106 p=32549 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 10:11:33,305 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:11:33,424 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 10:11:43,371 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-18 10:11:52,811 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-18 10:12:02,293 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-18 10:12:11,802 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-18 10:12:21,365 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-18 10:12:21,492 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 10:12:21,510 p=32549 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:12:21,530 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 10:12:22,376 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:12:22,398 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 10:12:22,413 p=32549 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:12:22,433 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 10:12:22,452 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:12:22,473 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : update firmware args=None, executable=/bin/bash, _raw_params=nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ firmware }}.mcs '" </dev/null >/dev/null 2>&1 &] ***
+2025-03-18 10:12:30,637 p=32549 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "16058875801.58227", "changed": false, "finished": 1, "msg": "Unsupported parameters for (ansible.legacy.command) module: args. Supported parameters include: warn, executable, chdir, strip_empty_ends, _raw_params, removes, argv, creates, _uses_shell, stdin_add_newline, stdin.", "results_file": "/cds/home/m/melchior/.ansible_async/16058875801.58227", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-18 10:12:30,637 p=32549 u=melchior n=ansible | ...ignoring
+2025-03-18 10:12:30,697 p=32549 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 10:12:30,738 p=32549 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-18 10:12:30,796 p=32549 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 10:12:30,796 p=32549 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-03-18 10:14:08,750 p=602 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 10:14:08,784 p=602 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 10:14:15,012 p=602 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:14:15,058 p=602 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 10:14:21,980 p=602 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"msg": "Incorrect sudo password"}
+2025-03-18 10:14:21,981 p=602 u=melchior n=ansible | ...ignoring
+2025-03-18 10:14:22,009 p=602 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 10:14:22,024 p=602 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"msg": "The conditional check 'artifacts_copy_status.changed' failed. The error was: error while evaluating conditional (artifacts_copy_status.changed): 'dict object' has no attribute 'changed'\n\nThe error appears to be in '/cds/home/m/melchior/git/default_node/daqnodeconfig/ansible/roles/drp_update/tasks/main.yml': line 16, column 3, but may\nbe elsewhere in the file depending on the exact syntax problem.\n\nThe offending line appears to be:\n\n\n- name: update drivers\n  ^ here\n"}
+2025-03-18 10:14:22,024 p=602 u=melchior n=ansible | ...ignoring
+2025-03-18 10:14:22,049 p=602 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 10:14:22,866 p=602 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:14:22,887 p=602 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 10:14:22,901 p=602 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:14:22,920 p=602 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 10:14:22,939 p=602 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:14:22,961 p=602 u=melchior n=ansible | TASK [./roles/drp_update : update firmware args={'cmd': 'nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c \'{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ firmware }}.mcs \'" </dev/null >/dev/null 2>&1 &'}, executable=/bin/bash] ***
+2025-03-18 10:14:31,112 p=602 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "813673509334.59197", "changed": false, "finished": 1, "msg": "Unsupported parameters for (ansible.legacy.command) module: args. Supported parameters include: warn, executable, chdir, strip_empty_ends, _raw_params, removes, argv, creates, _uses_shell, stdin_add_newline, stdin.", "results_file": "/cds/home/m/melchior/.ansible_async/813673509334.59197", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-18 10:14:31,157 p=602 u=melchior n=ansible | ...ignoring
+2025-03-18 10:14:31,200 p=602 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 10:14:31,223 p=602 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-18 10:14:31,310 p=602 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 10:14:31,311 p=602 u=melchior n=ansible | drp-srcf-cmp055            : ok=7    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=3   
+2025-03-18 10:16:46,829 p=1196 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 10:16:46,872 p=1196 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 10:16:52,160 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:16:52,205 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 10:17:02,075 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-18 10:17:11,612 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-18 10:17:21,093 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-18 10:17:30,814 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-18 10:17:40,288 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-18 10:17:40,320 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 10:17:40,336 p=1196 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:17:40,358 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 10:17:41,110 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:17:41,134 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 10:17:41,148 p=1196 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:17:41,168 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 10:17:41,186 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:17:41,205 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : update firmware args={'cmd': 'nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c \'{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ firmware }}.mcs \'" </dev/null >/dev/null 2>&1 &'}, executable=/bin/bash] ***
+2025-03-18 10:17:49,439 p=1196 u=melchior n=ansible | fatal: [drp-srcf-cmp055]: FAILED! => {"ansible_job_id": "475128913428.61146", "changed": false, "finished": 1, "msg": "Unsupported parameters for (ansible.legacy.command) module: args. Supported parameters include: warn, executable, chdir, strip_empty_ends, _raw_params, removes, argv, creates, _uses_shell, stdin_add_newline, stdin.", "results_file": "/cds/home/m/melchior/.ansible_async/475128913428.61146", "started": 1, "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+2025-03-18 10:17:49,439 p=1196 u=melchior n=ansible | ...ignoring
+2025-03-18 10:17:49,478 p=1196 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 10:17:49,506 p=1196 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": []
+}
+2025-03-18 10:17:49,564 p=1196 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 10:17:49,565 p=1196 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=1   
+2025-03-18 10:20:44,927 p=2401 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 10:20:44,965 p=2401 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 10:20:50,218 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:20:50,273 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 10:21:00,277 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-18 10:21:09,756 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-18 10:21:19,076 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-18 10:21:28,932 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-18 10:21:38,341 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-18 10:21:38,372 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 10:21:38,387 p=2401 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:21:38,414 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 10:21:39,291 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:21:39,314 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 10:21:39,328 p=2401 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:21:39,350 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 10:21:39,375 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:21:39,399 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : update firmware _raw_params={{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs] ***
+2025-03-18 10:21:48,264 p=2401 u=melchior n=ansible | changed: [drp-srcf-cmp055]
+2025-03-18 10:21:48,306 p=2401 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 10:21:48,334 p=2401 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": [
+        "Basedir = /cds/home/p/psrel/git/pgp-pcie-apps/firmware/submodules/axi-pcie-core/scripts",
+        "WARNING: PcieTop.AxiPcieCore.numDmaLanes = 1 != PcieTop.AxiPcieCore.AxiVersion.DMA_SIZE_G = 8",
+        "#########################################",
+        "Current Firmware Loaded on the PCIe card:",
+        "#########################################",
+        "Path         = PcieTop.AxiPcieCore.AxiVersion",
+        "FwVersion    = 0x2050000",
+        "UpTime       = 38 days, 21:29:54",
+        "GitHash      = 0x3e991ffef660bd16cc1789b8c89418698521d62f",
+        "XilinxDnaId  = 0x400200010117f1801c106185",
+        "FwTarget     = XilinxKcu1500Pgp4_10Gbps",
+        "BuildEnv     = Vivado v2023.1",
+        "BuildServer  = rdsrv410 (Ubuntu 20.04.6 LTS)",
+        "BuildDate    = Thu 15 Feb 2024 07:21:46 PM PST",
+        "Builder      = ruckman",
+        "#########################################",
+        "current XilinxKcu1500Pgp4_10Gbps 2050000",
+        "new XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819162750-weaver-02517bc_primary.mcs",
+        "Firmware already installed ",
+        "Rogue/pyrogue version v6.1.3. https://github.com/slaclab/rogue"
+    ]
+}
+2025-03-18 10:21:48,390 p=2401 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 10:21:48,390 p=2401 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   
+2025-03-18 10:23:34,133 p=3381 u=melchior n=ansible | PLAY [epix_drp] ******************************************************************************************************************************************************
+2025-03-18 10:23:34,265 p=3381 u=melchior n=ansible | TASK [Gathering Facts gather_subset=['all'], gather_timeout=10] ******************************************************************************************************
+2025-03-18 10:23:39,562 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:23:39,604 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : load files src={{ item.src }}, dest={{ item.dest }}, mode={{ item.mode }}, backup=True] ***************************************************
+2025-03-18 10:23:49,766 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/datadev.ko_srcf', 'dest': '/usr/local/sbin/datadev.ko', 'mode': 'a+x'})
+2025-03-18 10:23:59,375 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuSim', 'dest': '/usr/local/sbin/kcuSim', 'mode': 'a+x'})
+2025-03-18 10:24:08,932 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcuStatus', 'dest': '/usr/local/sbin/kcuStatus', 'mode': 'a+x'})
+2025-03-18 10:24:18,348 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/kcu_epix.service', 'dest': '/usr/lib/systemd/system/kcu.service', 'mode': 'a'})
+2025-03-18 10:24:27,907 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055] => (item={'src': '../files/sysctl.conf', 'dest': '/etc/sysctl.conf', 'mode': 'a'})
+2025-03-18 10:24:27,945 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : update drivers _raw_params=rmmod datadev
+systemctl disable irqbalance.service
+systemctl daemon-reload 
+systemctl start "{{ service }}".service
+systemctl enable "{{ service }}".service
+] ***
+2025-03-18 10:24:27,964 p=3381 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:24:27,986 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : Check if datadev_1 exists path=/proc/datadev_1] *******************************************************************************************
+2025-03-18 10:24:29,061 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:24:29,091 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_1 datadev=datadev_1] **********************************************************************************************************
+2025-03-18 10:24:29,105 p=3381 u=melchior n=ansible | skipping: [drp-srcf-cmp055]
+2025-03-18 10:24:29,132 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : use datadev_0 datadev=datadev_0] **********************************************************************************************************
+2025-03-18 10:24:29,151 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:24:29,213 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : update firmware _raw_params={{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs] ***
+2025-03-18 10:24:37,517 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055]
+2025-03-18 10:24:37,554 p=3381 u=melchior n=ansible | TASK [./roles/drp_update : result firmware update var=ps.stdout_lines] ***********************************************************************************************
+2025-03-18 10:24:37,581 p=3381 u=melchior n=ansible | ok: [drp-srcf-cmp055] => {
+    "ps.stdout_lines": [
+        "Basedir = /cds/home/p/psrel/git/pgp-pcie-apps/firmware/submodules/axi-pcie-core/scripts",
+        "WARNING: PcieTop.AxiPcieCore.numDmaLanes = 1 != PcieTop.AxiPcieCore.AxiVersion.DMA_SIZE_G = 8",
+        "#########################################",
+        "Current Firmware Loaded on the PCIe card:",
+        "#########################################",
+        "Path         = PcieTop.AxiPcieCore.AxiVersion",
+        "FwVersion    = 0x2050000",
+        "UpTime       = 38 days, 21:32:44",
+        "GitHash      = 0x3e991ffef660bd16cc1789b8c89418698521d62f",
+        "XilinxDnaId  = 0x400200010117f1801c106185",
+        "FwTarget     = XilinxKcu1500Pgp4_10Gbps",
+        "BuildEnv     = Vivado v2023.1",
+        "BuildServer  = rdsrv410 (Ubuntu 20.04.6 LTS)",
+        "BuildDate    = Thu 15 Feb 2024 07:21:46 PM PST",
+        "Builder      = ruckman",
+        "#########################################",
+        "current XilinxKcu1500Pgp4_10Gbps 2050000",
+        "new XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819162750-weaver-02517bc_primary.mcs",
+        "Firmware already installed ",
+        "Rogue/pyrogue version v6.1.3. https://github.com/slaclab/rogue"
+    ]
+}
+2025-03-18 10:24:37,641 p=3381 u=melchior n=ansible | PLAY RECAP ***********************************************************************************************************************************************************
+2025-03-18 10:24:37,642 p=3381 u=melchior n=ansible | drp-srcf-cmp055            : ok=6    changed=0    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0   

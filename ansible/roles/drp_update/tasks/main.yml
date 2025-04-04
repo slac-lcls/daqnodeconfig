@@ -3,19 +3,20 @@
 - name: load files
   become: true
   ignore_errors: true
-  check_mode: false
+  #check_mode: false
   register: artifacts_copy_status
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}" 
     mode: "{{ item.mode }}"
+    backup: true
   with_items: "{{ files_name }}"
 
 
 - name: update drivers
   become: true         #in order to run as root use the "-K" option in the command line
   ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
-  check_mode: false     #modify to false, this is a failsafe
+  #check_mode: false     #modify to false, this is a failsafe
   ansible.builtin.shell: |
     rmmod datadev
     systemctl disable irqbalance.service
@@ -44,7 +45,7 @@
 - name: update firmware
   become: false       #do not use root
   ignore_errors: true
-  check_mode: false    #failsafe, set to false if you want to run it
+  #check_mode: false    #failsafe, set to false if you want to run it
   vars:
     filepath:      "~psrel/mcs/drp/"
     setup_source:  "source ~tmoopr/daq/setup_env.sh"
@@ -53,11 +54,11 @@
   async: 600  # wait up to 10 minutes s
   poll: 5    # poll every 5 seconds
   changed_when: false
-  shell:
-  args:
-    #cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ firmware }}.mcs '" </dev/null >/dev/null 2>&1 &
+  ansible.builtin.shell:
+    #args:
+    #  cmd: nohup xterm -hold -T {{ inventory_hostname }} -e "bash -c '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ firmware }}.mcs '" </dev/null >/dev/null 2>&1 &
     cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs'
-    executable: /bin/bash  
+#    executable: /bin/bash  
   
 #do not show changes if no firmware has been updated
 - name: result firmware update
