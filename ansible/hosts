@@ -68,6 +68,6 @@ drp-srcf-cmp039
 drp-srcf-cmp053
 
 [tdetsim_fee_drp]
-# drp-neh-cmp001
-drp-neh-cmp002
-drp-neh-cmp003
+#drp-neh-cmp001
+#drp-neh-cmp002
+drp-neh-cmp012

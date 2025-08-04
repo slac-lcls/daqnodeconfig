@@ -54,9 +54,10 @@
   poll: 5    # poll every 5 seconds
   #changed_when: false
   ansible.builtin.shell:
-    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --package {{ filepath }}{{ firmware }}.mcs --rescan'
-  when: not ansible_check_mode
+#    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --package {{ filepath }}{{ firmware }}.mcs --rescan'
+    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs'
 
+  when: not ansible_check_mode
 
 #do not show changes if no firmware has been updated
 - name: result firmware update
@@ -65,4 +66,13 @@
   changed_when: "'Firmware already' in ps.stdout_lines"
   when: not ansible_check_mode
 
+ #updates the firmware, timeout 5 minutes 
+- name: rescan firmware
+  become: false       #do not use root
+  ignore_errors: true
+  check_mode: false    
 
+  ansible.builtin.shell:
+    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/rebootPcieFpga.py --dev /dev/{{ datadev }} --rescan''
+
+  when: not ansible_check_mode
