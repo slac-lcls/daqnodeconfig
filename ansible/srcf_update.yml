@@ -139,7 +139,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_fee2',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_fee',    dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
     - {src: '../files/tdetsim.service_fee2',    dest: '/etc/systemd/system/tdetsim.service',     mode: a+r}
