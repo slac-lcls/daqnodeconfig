@@ -3,6 +3,7 @@ drp-srcf-cmp001
 drp-srcf-cmp014
 drp-srcf-cmp025
 drp-srcf-cmp029
+drp-srcf-cmp010
 drp-srcf-cmp037
 drp-srcf-cmp041
 drp-srcf-cmp042
@@ -12,7 +13,6 @@ drp-srcf-cmp042
 drp-srcf-cmp002
 drp-srcf-cmp003
 drp-srcf-cmp008
-drp-srcf-cmp010
 drp-srcf-cmp015
 drp-srcf-cmp016
 drp-srcf-cmp028
@@ -68,6 +68,6 @@ drp-srcf-cmp039
 drp-srcf-cmp053
 
 [tdetsim_fee_drp]
-#drp-neh-cmp001
-#drp-neh-cmp002
+drp-neh-cmp001
+drp-neh-cmp002
 drp-neh-cmp012
