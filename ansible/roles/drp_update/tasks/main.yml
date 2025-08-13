@@ -21,7 +21,7 @@
     systemctl disable irqbalance.service
     systemctl daemon-reload 
     systemctl start "{{ service }}".service
-    systemctl enable "{{ service }}".service
+    systemctl --force enable "{{ service }}".service
   when: artifacts_copy_status.changed #if a file has changed then install drivers
 
 #Check which datadev to use
@@ -66,13 +66,16 @@
   changed_when: "'Firmware already' in ps.stdout_lines"
   when: not ansible_check_mode
 
- #updates the firmware, timeout 5 minutes 
-- name: rescan firmware
-  become: false       #do not use root
-  ignore_errors: true
-  check_mode: false    
+#  #updates the firmware, timeout 5 minutes 
+# - name: rescan firmware
+#   become: false       #do not use root
+#   ignore_errors: true
+#   check_mode: false    
+#   vars:
+#     setup_source:  "source ~tmoopr/daq/setup_env.sh"
+#     cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
 
-  ansible.builtin.shell:
-    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/rebootPcieFpga.py --dev /dev/{{ datadev }} --rescan''
+#   ansible.builtin.shell:
+#     cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/rebootPcieFpga.py --dev /dev/{{ datadev }} --rescan True'
 
-  when: not ansible_check_mode
+#   when: not ansible_check_mode
