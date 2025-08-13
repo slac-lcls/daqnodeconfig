@@ -3,7 +3,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
     - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
     - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
     - {src: '../files/kcu_hsd.service',         dest: '/etc/systemd/system/kcu.service',     mode: a+r}
@@ -20,7 +20,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
     - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
     - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
     - {src: '../files/kcu_wave.service',        dest: '/etc/systemd/system/kcu.service',     mode: a+r}
@@ -37,7 +37,7 @@
   
   vars: 
    files_name: 
-   - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+   - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
    - {src: '../files/kcu.service',             dest: '/etc/systemd/system/kcu.service',     mode: a+r}
@@ -54,13 +54,13 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
     - {src: '../files/tdetsim.service',         dest: '/etc/systemd/system/tdetsim.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
   
-    firmware: DrpTDet-0x05000000-20240905155809-weaver-4a82bda_primary
+    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
     service: tdetsim
   
   roles: 
@@ -70,13 +70,13 @@
 - hosts: hightiming_drp
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
     - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/tdetsim.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
       
-    firmware: DrpTDet-0x05000000-20240905155809-weaver-4a82bda_primary
+    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
     service: tdetsim
     
   roles: 
@@ -87,7 +87,7 @@
   
   vars: 
     files_name: 
-      - {src: '../files/datadev.ko_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+      - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
       - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
       - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
       - {src: '../files/kcu_epix.service',        dest: '/etc/systemd/system/kcu.service',     mode: a+r}
@@ -145,7 +145,7 @@
     - {src: '../files/tdetsim.service_fee2',    dest: '/etc/systemd/system/tdetsim.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
-    firmware: DrpTDet-0x05040200-20250527151334-weaver-1d8a4ae_primary
+    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
     service: tdetsim
     
     
