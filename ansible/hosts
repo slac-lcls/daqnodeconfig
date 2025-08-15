@@ -1,3 +1,18 @@
+[RIX_timing_drp]
+drp-srcf-cmp025
+drp-srcf-cmp029
+drp-srcf-cmp010
+
+[RIX_hightiming_drp]
+drp-srcf-cmp002
+
+[TMO_timing_drp]
+drp-srcf-cmp001
+
+[TMO_hightiming_drp]
+drp-srcf-cmp003
+drp-srcf-cmp028
+
 [timing_drp]
 drp-srcf-cmp001
 drp-srcf-cmp014
@@ -7,7 +22,6 @@ drp-srcf-cmp010
 drp-srcf-cmp037
 drp-srcf-cmp041
 drp-srcf-cmp042
-
 
 [hightiming_drp]
 drp-srcf-cmp002
@@ -19,7 +33,7 @@ drp-srcf-cmp028
 drp-srcf-cmp030
 drp-srcf-cmp054
 
-[wave8_drp]
+[wave_drp]
 drp-srcf-cmp004
 drp-srcf-cmp051
 
@@ -40,6 +54,24 @@ drp-srcf-cmp049
 drp-srcf-cmp050
 drp-srcf-cmp052
 
+[TMO_hsd_drp]
+drp-srcf-cmp017
+drp-srcf-cmp018
+drp-srcf-cmp019
+drp-srcf-cmp020
+drp-srcf-cmp021
+drp-srcf-cmp022
+drp-srcf-cmp023
+drp-srcf-cmp024
+drp-srcf-cmp046
+drp-srcf-cmp048
+drp-srcf-cmp050
+
+[RIX_hsd_drp]
+drp-srcf-cmp005
+drp-srcf-cmp009
+drp-srcf-cmp052
+
 [camera_drp]
 drp-srcf-cmp006
 drp-srcf-cmp007
@@ -49,6 +81,17 @@ drp-srcf-cmp013
 drp-srcf-cmp026
 drp-srcf-cmp027
 
+[TMO_camera_drp]
+drp-srcf-cmp006
+drp-srcf-cmp007
+drp-srcf-cmp011
+drp-srcf-cmp013
+drp-srcf-cmp026
+
+[RIX_camera_drp]
+drp-srcf-cmp012
+drp-srcf-cmp027
+
 [epixuhr_drp]
 drp-srcf-cmp055
 
@@ -56,7 +99,6 @@ drp-srcf-cmp055
 drp-srcf-cmp031
 drp-srcf-cmp040
 drp-srcf-cmp044
-
 
 [Jungfrau_drp]
 drp-srcf-cmp032
