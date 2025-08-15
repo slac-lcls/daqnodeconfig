@@ -1,132 +1,132 @@
 --- 
-- hosts: hsd_drp
+- hosts: "{{ variable_host | default('hsd_drp') }}"
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
-    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
-    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
-    - {src: '../files/kcu_hsd.service',         dest: '/etc/systemd/system/kcu.service',     mode: a+r}
+    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
+    #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
+    - {src: '../files/kcu_hsd.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
-    firmware: DrpPgpIlv-0x05000000-20240814110544-weaver-88fa79c_primary
-    service: kcu
+    firmware: DrpPgpIlv-0x05040300-20250811085728-weaver-846de54_primary
+    
     
   roles: 
   - {role: ./roles/drp_update} 
   tags: hsd
 
-- hosts: wave8_drp
+- hosts: "{{ variable_host | default('wave_drp') }}"
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
-    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
-    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
-    - {src: '../files/kcu_wave.service',        dest: '/etc/systemd/system/kcu.service',     mode: a+r}
+    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+   # - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
+   # - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
+    - {src: '../files/kcu_wave.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
     firmware: XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff_primary
-    service: kcu
+    
     
   roles: 
   - {role: ./roles/drp_update} 
-  tags: wave8
+  tags: wave
 
-- hosts: camera_drp
+- hosts: "{{ variable_host | default('camera_drp') }}"
   
   vars: 
    files_name: 
-   - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
-   - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
-   - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
-   - {src: '../files/kcu.service',             dest: '/etc/systemd/system/kcu.service',     mode: a+r}
+   - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+   #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
+   #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
+   - {src: '../files/kcu.service',             dest: '/etc/systemd/system/datadev.service',     mode: a+r}
    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
-   firmware: Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7_primary
-   service: kcu
+   firmware: Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a_primary
+   
     
   roles: 
   - {role: ./roles/drp_update} 
   tags: camera
 
-- hosts: timing_drp
+- hosts: "{{ variable_host | default('timing_drp') }}"
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-    - {src: '../files/tdetsim.service',         dest: '/etc/systemd/system/tdetsim.service',     mode: a+r}
+    - {src: '../files/tdetsim.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
   
     firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
-    service: tdetsim
+    
   
   roles: 
   - {role: ./roles/drp_update} 
   tags: timing
 
-- hosts: hightiming_drp
+- hosts: "{{ variable_host | default('hightiming_drp') }}"
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-    - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/tdetsim.service', mode: a+r}
+    - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/datadev.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
       
     firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
-    service: tdetsim
+    
     
   roles: 
   - {role: ./roles/drp_update} 
   tags: hightiming
   
-- hosts: epixuhr_drp
+- hosts: "{{ variable_host | default('epixuhr_drp') }}"
   
   vars: 
     files_name: 
-      - {src: '../files/datadev.ko_6.7.1_srcf',         dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
-      - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
-      - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-      - {src: '../files/kcu_epix.service',        dest: '/etc/systemd/system/kcu.service',     mode: a+r}
+      - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+     # - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+     # - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+      - {src: '../files/kcu_epix.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
       - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
     firmware: XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819162750-weaver-02517bc_primary
-    service: kcu
+    
     
   roles: 
   - {role: ./roles/drp_update} 
   tags: epixuhr
 
-- hosts: epix100_drp
+- hosts: "{{ variable_host | default('epix100_drp') }}"
 
   vars: 
     files_name: 
     - {src: '../files/datadev.ko_srcf.6.6.1',       dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
-    - {src: '../files/kcu_epix100.service',         dest: '/etc/systemd/system/kcu.service',     mode: a+r}
+    - {src: '../files/kcu_epix100.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',                 dest: '/etc/sysctl.conf',                        mode: a+r}
   
     firmware: Lcls2EpixHrXilinxKcu1500Pgp4_6Gbps-0x03020000-20250402173813-ruckman-68578d8_primary
-    service: kcu
+    
   
   roles: 
   - {role: ./roles/drp_update} 
   tags: epix100
 
-- hosts: Jungfrau_drp
+- hosts: "{{ variable_host | default('Jungfrau_drp') }}"
   
   vars: 
     files_name: 
     - {src: '../files/datadev.ko_srcf.6.6.1',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
-    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
-    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-    - {src: '../files/kcu_jung.service',        dest: '/etc/systemd/system/kcu.service',     mode: a+r}
+   # - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+   # - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+    - {src: '../files/kcu_jung.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
     firmware: Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731_primary
-    service: kcu
+    
     
     
   roles: 
@@ -135,18 +135,18 @@
 
 
 
-- hosts: tdetsim_fee_drp
+- hosts: "{{ variable_host | default('tdetsim_fee_drp') }}" 
   
   vars: 
     files_name: 
     - {src: '../files/datadev.ko_6.7.1_fee',    dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
-    - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
-    - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-    - {src: '../files/tdetsim.service_fee2',    dest: '/etc/systemd/system/tdetsim.service',     mode: a+r}
+    #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+    #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+    - {src: '../files/tdetsim.service_fee2',    dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
     firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
-    service: tdetsim
+    
     
     
   roles: 
