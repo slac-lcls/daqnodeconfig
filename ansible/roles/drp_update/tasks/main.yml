@@ -71,7 +71,7 @@
   
  #updates the firmware, timeout 5 minutes 
 - name: update firmware
-  become: false       #do not use root
+  become: true
   ignore_errors: true
   check_mode: false    
   vars:
@@ -84,7 +84,7 @@
   #changed_when: false
   ansible.builtin.shell:
 #    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --package {{ filepath }}{{ firmware }}.mcs --rescan'
-    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/nodePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }}.mcs'
+    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }} --rescan False'
 
   when: not ansible_check_mode
 

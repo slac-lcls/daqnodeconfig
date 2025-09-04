@@ -8,7 +8,7 @@ Type=forking
 ExecStartPre=-/sbin/rmmod datadev.ko
 ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=16 cfgRxCount=1048560 cfgSize=8192 cfgMode=0x2
 #ExecStart=/sbin/insmod /usr/local/sbin/datadev.ko cfgTxCount=4 cfgRxCount=65532 cfgSize=131072 cfgMode=0x2
-ExecStartPost=/usr/local/sbin/kcuStatus -I -d /dev/datadev_0
+
 # To do: The irqbalance service will defeat the following unless it is disabled or the IRQs are banned in /etc/sysconfig/irqbalance
 ExecStartPost=-/usr/bin/sh -c "/usr/bin/echo 4 > /proc/irq/`grep datadev_0 /proc/interrupts | /usr/bin/cut -d : -f 1 | /usr/bin/tr -cd [:digit:]`/smp_affinity_list"
 ExecStartPost=-/usr/bin/sh -c "/usr/bin/echo 5 > /proc/irq/`grep datadev_1 /proc/interrupts | /usr/bin/cut -d : -f 1 | /usr/bin/tr -cd [:digit:]`/smp_affinity_list"

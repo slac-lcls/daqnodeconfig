@@ -9,7 +9,7 @@
     - {src: '../files/kcu_hsd.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
-    firmware: DrpPgpIlv-0x05040300-20250811085728-weaver-846de54_primary
+    firmware: DrpPgpIlv-0x05040300-20250811085728-weaver-846de54
     
     
   roles: 
@@ -26,7 +26,7 @@
     - {src: '../files/kcu_wave.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
-    firmware: XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff_primary
+    firmware: XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff
     
     
   roles: 
@@ -43,7 +43,7 @@
    - {src: '../files/kcu.service',             dest: '/etc/systemd/system/datadev.service',     mode: a+r}
    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
-   firmware: Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a_primary
+   firmware: Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a
    
     
   roles: 
@@ -60,7 +60,7 @@
     - {src: '../files/tdetsim.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
   
-    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
+    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54
     
   
   roles: 
@@ -76,7 +76,7 @@
     - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/datadev.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
       
-    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
+    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54
     
     
   roles: 
@@ -93,7 +93,7 @@
       - {src: '../files/kcu_epix.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
       - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
-    firmware: XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819162750-weaver-02517bc_primary
+    firmware: XilinxKcu1500Pgp4_10Gbps-0x02050000-20240819162750-weaver-02517bc
     
     
   roles: 
@@ -108,7 +108,7 @@
     - {src: '../files/kcu_epix100.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',                 dest: '/etc/sysctl.conf',                        mode: a+r}
   
-    firmware: Lcls2EpixHrXilinxKcu1500Pgp4_6Gbps-0x03020000-20250402173813-ruckman-68578d8_primary
+    firmware: Lcls2EpixHrXilinxKcu1500Pgp4_6Gbps-0x03020000-20250402173813-ruckman-68578d8
     
   
   roles: 
@@ -125,7 +125,7 @@
     - {src: '../files/kcu_jung.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
-    firmware: Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731_primary
+    firmware: Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
     
     
     
@@ -145,10 +145,40 @@
     - {src: '../files/tdetsim.service_fee2',    dest: '/etc/systemd/system/datadev.service',     mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
-    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54_primary
-    
-    
+    firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54
     
   roles: 
   - {role: ./roles/drp_update} 
   tags: tdetsim_fee
+
+- hosts: "{{ variable_host | default('TMO_hsd_cards') }}" 
+  vars:
+    cards_name:
+    - '1b'
+    - '1a'
+    - '3e'
+    - '3d'
+    - '01'
+    - 'da' 
+    - 'b2'
+    - 'b1'
+    - '89'
+    - '88'
+    firmware: hsd_6400m-0x06020000-20250630083426-weaver-86f0c28.mcs
+  roles:
+  - {role: ./roles/fpga_update}
+  tags: TMO_hsd_cards
+
+- hosts: "{{ variable_host | default('RIX_hsd_cards') }}" 
+  vars:
+    cards_name:
+    #- '1b'
+    #- '1a'
+    - '3d'
+    - '3e'
+    firmware: hsd_6400m-0x06020000-20250630083426-weaver-86f0c28.mcs
+    
+  roles:
+  - {role: ./roles/fpga_update}
+  tags: RIX_hsd_cards
+    

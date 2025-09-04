@@ -1,0 +1,30 @@
+---
+
+- name: Update FPGA firmware
+  become: true
+  ignore_errors: true
+  check_mode: false    
+  vars:
+    filepath:      "~psrel/mcs/hsd/"
+    setup_source:  "source ~tmoopr/daq/setup_env.sh"
+    cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
+    datadev: "{{ item }}"
+
+  async: 300  # wait up to 5 minutes s
+  poll: 5    # poll every 5 seconds
+  #changed_when: false
+  register: ps
+  ansible.builtin.shell:
+    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }} --rescan False --type BPI'
+
+  with_items: "{{ cards_name }}"
+  when: not ansible_check_mode
+
+# reset the node if firmware has been changed
+- name: ipmi reboot    #IF firmware is updated, reset the node
+  become: true         #in order to run as root use the "-K" option in the command line
+  ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
+
+  ansible.builtin.shell: |
+    ipmitool power reset
+  when: not ps.stdout_lines is search('Firmware already')
