@@ -3,7 +3,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/datadev.ko_6.6.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
     - {src: '../files/kcu_hsd.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
@@ -20,7 +20,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/datadev.ko_6.6.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
    # - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
    # - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
     - {src: '../files/kcu_wave.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
@@ -37,7 +37,7 @@
   
   vars: 
    files_name: 
-   - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+   - {src: '../files/datadev.ko_6.6.1_srcf',   dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
    #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',              mode: a+x}
    #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',           mode: a+x}
    - {src: '../files/kcu.service',             dest: '/etc/systemd/system/datadev.service',     mode: a+r}
@@ -54,7 +54,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.6.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
     - {src: '../files/tdetsim.service',         dest: '/etc/systemd/system/datadev.service',     mode: a+r}
@@ -70,13 +70,15 @@
 - hosts: "{{ variable_host | default('hightiming_drp') }}"
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.6.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
     - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/datadev.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
       
     firmware: DrpTDet-0x05040300-20250811085743-weaver-846de54
+    #DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54
+    
     
     
   roles: 
@@ -87,7 +89,7 @@
   
   vars: 
     files_name: 
-      - {src: '../files/datadev.ko_6.7.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+      - {src: '../files/datadev.ko_6.6.1_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
      # - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
      # - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
       - {src: '../files/kcu_epix.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
@@ -139,7 +141,7 @@
   
   vars: 
     files_name: 
-    - {src: '../files/datadev.ko_6.7.1_fee',    dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '../files/datadev.ko_6.6.1_fee',    dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
     - {src: '../files/tdetsim.service_fee2',    dest: '/etc/systemd/system/datadev.service',     mode: a+r}

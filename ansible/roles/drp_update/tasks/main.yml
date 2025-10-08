@@ -29,16 +29,28 @@
       systemctl stop "tdetsim.service"
     fi
 
-- name: Ensure kcu.service file is absent #remove kcu.service if present
+- name: Ensure kcu.service file is absent in /etc #remove kcu.service if present
   become: true
   ansible.builtin.file:
     path: "/etc/systemd/system/kcu.service"
     state: absent
 
-- name: Ensure tdetsim.service file is absent #remove tdetsim.service if present
+- name: Ensure tdetsim.service file is absent in /etc #remove tdetsim.service if present
   become: true
   ansible.builtin.file:
     path: "/etc/systemd/system/tdetsim.service"
+    state: absent
+
+- name: Ensure kcu.service file is absent in /usr/lib #remove kcu.service if present
+  become: true
+  ansible.builtin.file:
+    path: "/usr/lib/systemd/system/kcu.service"
+    state: absent
+
+- name: Ensure tdetsim.service file is absent in /usr/lib #remove tdetsim.service if present
+  become: true
+  ansible.builtin.file:
+    path: "/usr/lib/systemd/system/tdetsim.service"
     state: absent
 
 - name: update drivers #if any of the files have changed, start and enable the service
