@@ -5,9 +5,9 @@
   ignore_errors: true
   check_mode: false    
   vars:
-    filepath:      "~psrel/mcs/hsd/"
-    setup_source:  "source ~tmoopr/daq/setup_env.sh"
-    cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
+    filepath:      "/cds/home/p/psrel/mcs/hsd/"
+    setup_source:  "source /cds/home/opr/tmoopr/daq/setup_env.sh"
+    cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
     datadev: "{{ item }}"
 
   async: 300  # wait up to 5 minutes s

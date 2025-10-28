@@ -11,4 +11,4 @@ ansible-playbook -K srcf_update.yml --tags camera -e variable_host=TMO_camera_dr
 echo "running ansible playbooks for TMO hsd nodes"
 ansible-playbook -K srcf_update.yml --tags hsd -e variable_host=TMO_hsd_drp
 echo "running ansible playbooks for TMO wave8 nodes"
-ansible-playbook -K srcf_update.yml --tags wave8 -e variable_host=TMO_wave8_drp 
+ansible-playbook -K srcf_update.yml --tags wave

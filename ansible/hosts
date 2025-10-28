@@ -119,3 +119,7 @@ daq-tmo-hsd-01
 
 [RIX_hsd_cards]
 daq-rix-hsd-01
+
+[KCU_XPM_drp]
+drp-srcf-mon009
+drp-srcf-mon010

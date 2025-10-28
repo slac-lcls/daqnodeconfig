@@ -10,5 +10,5 @@ echo "running ansible playbooks for RIX camera nodes"
 ansible-playbook -K srcf_update.yml --tags camera -e variable_host=RIX_camera_drp
 echo "running ansible playbooks for RIX hsd nodes"
 ansible-playbook -K srcf_update.yml --tags hsd -e variable_host=RIX_hsd_drp
-echo "running ansible playbooks for RIX wave8 nodes"
-ansible-playbook -K srcf_update.yml --tags wave8 -e variable_host=RIX_wave8_drp
+echo "running ansible playbooks for TMO and RIX wave8 nodes"
+ansible-playbook -K srcf_update.yml --tags wave
