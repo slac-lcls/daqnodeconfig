@@ -91,9 +91,9 @@
   ignore_errors: true
   check_mode: false    
   vars:
-    filepath:      "~psrel/mcs/"
-    setup_source:  "source ~tmoopr/daq/setup_env.sh"
-    cd_cameralink: "cd ~psrel/git/pgp-pcie-apps/software/"
+    filepath:      "/cds/home/p/psrel/mcs/"
+    setup_source:  "source /cds/home/opr/tmoopr/daq/setup_env.sh"
+    cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
   register: ps
   async: 300  # wait up to 5 minutes s
   poll: 5    # poll every 5 seconds

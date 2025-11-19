@@ -70,6 +70,22 @@
 - hosts: "{{ variable_host | default('hightiming_drp') }}"
   vars: 
     files_name: 
+    - {src: '../files/datadev.ko_srcf',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+    #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+    - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/datadev.service', mode: a+r}
+    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
+      
+    firmware: drp/DrpTDet-0x05040300-20250811085743-weaver-846de54
+    #DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54
+    
+  roles: 
+  - {role: ./roles/drp_update} 
+  tags: hightiming
+
+- hosts: "{{ variable_host | default('hightiming_rocky9_drp') }}"
+  vars: 
+    files_name: 
     - {src: '../files/datadev.ko_6.7.1_srcf_rocky9',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
@@ -79,12 +95,29 @@
     firmware: drp/DrpTDet-0x05040300-20250811085743-weaver-846de54
     #DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54
     
+  roles: 
+  - {role: ./roles/drp_update} 
+  tags: hightiming_rocky9
+
+
+- hosts: "{{ variable_host | default('Jungfrau_rocky9_drp') }}"
+  
+  vars: 
+    files_name: 
+    - {src: '../files/datadev.ko_6.7.1_srcf_rocky9',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+   # - {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
+   # - {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
+    - {src: '../files/kcu_jung.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
+    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
+    firmware: drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
     
   roles: 
   - {role: ./roles/drp_update} 
-  tags: hightiming
-  
+  tags: jungfrau_rocky9
+
+
+
 - hosts: "{{ variable_host | default('epixuhr_drp') }}"
   
   vars: 
@@ -128,8 +161,6 @@
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
     
     firmware: drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
-    
-    
     
   roles: 
   - {role: ./roles/drp_update} 

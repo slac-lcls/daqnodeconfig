@@ -24,14 +24,16 @@ drp-srcf-cmp041
 drp-srcf-cmp042
 
 [hightiming_drp]
-#drp-srcf-cmp002
-#drp-srcf-cmp003
+drp-srcf-cmp002
+drp-srcf-cmp003
+drp-srcf-cmp015
+drp-srcf-cmp016
+drp-srcf-cmp028
+drp-srcf-cmp030
+drp-srcf-cmp054
+
+[hightiming_rocky9_drp]
 drp-srcf-cmp008
-#drp-srcf-cmp015
-#drp-srcf-cmp016
-#drp-srcf-cmp028
-#drp-srcf-cmp030
-#drp-srcf-cmp054
 
 [wave_drp]
 drp-srcf-cmp004
