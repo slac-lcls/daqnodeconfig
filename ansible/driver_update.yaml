@@ -1,0 +1,31 @@
+--- 
+- hosts: "{{ variable_host | default('driver_drp') }}"
+  
+  vars: 
+    src: './roles/drp_update/files/datadev.ko_srcf'
+    dest: '/usr/local/sbin/datadev.ko'
+    mode: a+x
+      
+  tasks: 
+
+  # uploads the files in the node if not the same
+  - name: load files
+    become: true
+    ignore_errors: true  
+    register: artifacts_copy_status
+    ansible.builtin.copy:
+      src: "{{ src }}"
+      dest: "{{ dest }}" 
+      mode: "{{ mode }}"
+      backup: true
+
+
+  - name: update drivers #if any of the files have changed, start and enable the service
+    become: true         #in order to run as root use the "-K" option in the command line
+    ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
+    ansible.builtin.shell: |
+      rmmod datadev
+      systemctl daemon-reload 
+      systemctl start datadev.service
+      systemctl --force enable datadev.service
+  # when: artifacts_copy_status.changed #if a file has changed then install drivers
