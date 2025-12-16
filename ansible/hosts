@@ -129,7 +129,7 @@ drp-srcf-mon009
 drp-srcf-mon010
 
 
-[driver_host] # TMO and RIX nodes needing driver update
+[driver_drp] # TMO and RIX nodes needing driver update
 drp-srcf-cmp001
 drp-srcf-cmp002
 drp-srcf-cmp003
