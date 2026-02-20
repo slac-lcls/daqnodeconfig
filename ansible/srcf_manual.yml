@@ -1,0 +1,17 @@
+# How to run the script
+# ansible-playbook srcf_manual.yaml --extra-vars "@variables_file.json"
+
+# modify the json file to meet your requirements 
+--- 
+- hosts: "{{ host }}"
+  
+  vars: 
+    files_name: 
+    - {src: '../files/{{ datadev }}',           dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/{{ service }}',           dest: '/etc/systemd/system/datadev.service', mode: a+r}
+    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
+    
+    firmware: drp/{{ firmware }}
+    
+  roles: 
+  - {role: ./roles/drp_update} 

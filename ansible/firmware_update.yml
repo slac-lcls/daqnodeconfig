@@ -1,0 +1,58 @@
+
+---
+- hosts: "{{ variable_host | default('driver_drp') }}"
+  gather_facts: false  # Moved to play level
+  become: true         # Moved to play level
+  vars:
+    firmware: "{{variable_firmware | default('drp/DrpTDet-0x05040300-20250811085743-weaver-846de54')}}"
+  tasks:
+  #Check which datadev to use
+  - name: Check if datadev_1 exists
+    stat:
+      path: /proc/datadev_1
+    register: stat_result
+
+  - name: use datadev_1
+    set_fact:
+      datadev: datadev_1
+    when: stat_result.stat.exists
+
+  - name: use datadev_0
+    set_fact:  
+      datadev: datadev_0
+    when: not stat_result.stat.exists
+    
+  #updates the firmware, timeout 5 minutes 
+  - name: update firmware
+    become: true
+    ignore_errors: true
+    check_mode: false    
+    vars:
+      filepath:      "/cds/home/p/psrel/mcs/"
+      setup_source:  "source /cds/home/opr/tmoopr/daq/setup_env.sh"
+      cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
+    register: ps
+    async: 300  # wait up to 5 minutes s
+    poll: 5    # poll every 5 seconds
+    #changed_when: false
+    ansible.builtin.shell:
+  #    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --package {{ filepath }}{{ firmware }}.mcs --rescan'
+      cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }} --rescan False'
+
+    when: not ansible_check_mode
+
+  #do not show changes if no firmware has been updated
+  - name: result firmware update
+    ansible.builtin.debug: 
+      var=ps.stdout_lines
+    changed_when: "'Firmware already' in ps.stdout_lines"
+    when: not ansible_check_mode
+
+  # reset the node if firmware has been changed
+  - name: ipmi reboot    #IF firmware is updated, reset the node
+    become: true         #in order to run as root use the "-K" option in the command line
+    ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
+
+    ansible.builtin.shell: |
+      ipmitool power reset
+    when: not ps.stdout_lines is search('Firmware already')

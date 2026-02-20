@@ -1,0 +1,6 @@
+{
+    "host":"drp-srcf-cmp000",
+    "datadev":"datadev_file.ko",
+    "service":".service",
+    "firmware":"mcs_file_wo_primary"
+}

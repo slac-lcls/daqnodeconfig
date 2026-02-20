@@ -83,13 +83,13 @@
   - {role: ./roles/drp_update} 
   tags: hightiming
 
-- hosts: "{{ variable_host | default('hightiming_rocky9_drp') }}"
+- hosts: "{{ variable_host | default('timing_rocky9_drp') }}"
   vars: 
     files_name: 
     - {src: '../files/datadev.ko_6.7.1_srcf_rocky9',   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     #- {src: '../files/kcuSim',                  dest: '/usr/local/sbin/kcuSim',                  mode: a+x}
     #- {src: '../files/kcuStatus',               dest: '/usr/local/sbin/kcuStatus',               mode: a+x}
-    - {src: '../files/tdetsim_high.service',    dest: '/etc/systemd/system/datadev.service', mode: a+r}
+    - {src: '../files/tdetsim.service',         dest: '/etc/systemd/system/datadev.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                        mode: a+r}
       
     firmware: drp/DrpTDet-0x05040300-20250811085743-weaver-846de54
@@ -97,7 +97,7 @@
     
   roles: 
   - {role: ./roles/drp_update} 
-  tags: hightiming_rocky9
+  tags: timing_rocky9
 
 
 - hosts: "{{ variable_host | default('Jungfrau_rocky9_drp') }}"
