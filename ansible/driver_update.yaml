@@ -1,9 +1,9 @@
 ---
-- hosts: "{{ variable_host | default('driver_drp') }}"
+- hosts: "{{ host }}"
   gather_facts: false  # Moved to play level
   become: true         # Moved to play level
   vars:
-    src: './roles/drp_update/files/datadev.ko_srcf'
+    src: './roles/drp_update/files/{{ driver }} '
     dest: '/usr/local/sbin/datadev.ko'
     mode: '0755'       # Fixed: valid octal mode
   tasks:
