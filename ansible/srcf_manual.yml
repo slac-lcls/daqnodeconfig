@@ -7,8 +7,8 @@
   
   vars: 
     files_name: 
-    - {src: '../files/{{ datadev }}',           dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
-    - {src: '../files/{{ service }}',           dest: '/etc/systemd/system/datadev.service', mode: a+r}
+    - {src: '../files/{{ driver }}',           dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/{{ service }}.service',   dest: '/etc/systemd/system/datadev.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
     firmware: drp/{{ firmware }}
