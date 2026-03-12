@@ -1,0 +1,25 @@
+# This playbook finds the Linux distribution of the target hosts 
+
+# how to run the script
+# ansible-playbook distro_info.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
+
+# RM 2026-03-11: Initial version
+
+---
+- hosts: "{{ host }}"
+  tasks:
+    - name: Find Linux distro
+      ansible.builtin.setup:
+        filter: ansible_distribution
+      register: distro_info
+
+    - name: Find Linux version
+      ansible.builtin.setup:
+        filter: ansible_distribution_version
+      register: version_info
+
+    - name: Initial message
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}_{{ distro_info.ansible_facts.ansible_distribution }}_version_{{ version_info.ansible_facts.ansible_distribution_version }}"
+
+  

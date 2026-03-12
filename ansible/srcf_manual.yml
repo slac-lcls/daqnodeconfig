@@ -1,17 +1,30 @@
-# How to run the script
-# ansible-playbook srcf_manual.yaml --extra-vars "@variables_file.json"
+# SRCF_manual.yml: Master update for all devices (driver, service, firmware and sysctl.conf)
+# This playbook updates the driver, service, firmware and sysctl.conf on the nodes.
 
-# modify the json file to meet your requirements 
+# How to run the script
+# ansible-playbook srcf_manual.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' 
+# -e driver='datadev.ko_6.9.0_rocky9_6' -e service='kcu_hsd' 
+# -e firmware='drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54'"
+
+# RM 2026-03-11: Initial version
 --- 
 - hosts: "{{ host }}"
   
   vars: 
     files_name: 
-    - {src: '../files/{{ driver }}',           dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
+    - {src: '../files/{{ driver }}',            dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
     - {src: '../files/{{ service }}.service',   dest: '/etc/systemd/system/datadev.service', mode: a+r}
     - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
     
     firmware: drp/{{ firmware }}
+  tasks: 
+    - name: initial message
+      ansible.builtin.debug:
+        msg: Master update {{ driver }}, {{ service }}, {{ firmware }} and sysctl.conf on {{ inventory_hostname }}
+
+    - name: load files
+      include_tasks: files_update.yml
     
-  roles: 
-  - {role: ./roles/drp_update} 
+    - name: update firmware
+      include_tasks: firmware_update.yml
+

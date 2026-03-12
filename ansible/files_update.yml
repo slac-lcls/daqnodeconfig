@@ -1,0 +1,96 @@
+# This playbook updates the driver and service files on the nodes. 
+# 
+# how to run the script
+# ansible-playbook files_update.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='datadev.ko_6.9.0_rocky9_6' -e service='kcu_hsd'
+
+# RM 2026-03-11: Initial version
+---
+- hosts: "{{ host }}"
+  gather_facts: true  # Moved to play level
+  become: true         # Moved to play level
+  
+  vars: 
+    path: "/cds/home/p/psrel/ansible_files"
+    linux_repo: "{{ ansible_distribution }}"
+    linux_version: "{{ ansible_distribution_version }}"
+
+    files_name: 
+    - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}',                  dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '{{ path }}/services/{{ service }}.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
+    - {src: '{{ path }}/sysctl.conf',                           dest: '/etc/sysctl.conf',                        mode: a+r}
+  pre_tasks:
+    # ------------------------------------------------------------------ #
+    # Validate that required extra vars were passed                        #
+    # ------------------------------------------------------------------ #
+    - name: Assert required extra variables are defined
+      ansible.builtin.assert:
+        that:
+          - host is defined and host | length > 0
+          - driver is defined and driver | length > 0
+          - service is defined and service | length > 0
+        fail_msg: >
+          All 'host', 'driver', and 'service' must be supplied as
+          extra variables (-e "host=... driver=... service=...").
+ 
+    # ------------------------------------------------------------------ #
+    # Validate that the source file actually exists on the controller     #
+    # ------------------------------------------------------------------ #
+    - name: Check that the source driver file exists on the controller
+      ansible.builtin.stat:
+        path: "{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}"
+      register: src_stat
+      delegate_to: localhost
+ 
+    - name: Fail if the source driver file is missing
+      ansible.builtin.fail:
+        msg: >
+          Source file '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}' not found on the Ansible controller.
+          Detected distro: {{ ansible_distribution }} {{ ansible_distribution_version }}.
+      when: not src_stat.stat.exists
+
+    - name: Check that the source service file exists on the controller
+      ansible.builtin.stat:
+        path: "{{ path }}/services/{{ service }}.service"
+      register: service_stat
+      delegate_to: localhost
+ 
+    - name: Fail if the source service file is missing
+      ansible.builtin.fail:
+        msg: >
+          Source file '{{ path }}/services/{{ service }}.service' not found on the Ansible controller.
+          Detected distro: {{ ansible_distribution }} {{ ansible_distribution_version }}.
+      when: not service_stat.stat.exists
+
+
+  tasks:
+    - name: initial message
+      ansible.builtin.debug:
+        msg: Installing new files {{ driver }}, {{ service }}, and sysctl.conf on {{ inventory_hostname }}
+
+    - name: Repo and version info
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} {{ linux_repo }} version {{ linux_version }}"
+
+    # uploads the files in the node if not the same
+    - name: load files
+      become: true
+      ignore_errors: true  
+      register: artifacts_copy_status
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}" 
+        mode: "{{ item.mode }}"
+        backup: true
+      with_items: "{{ files_name }}"
+      notify: install drivers
+
+  handlers:
+    - name: install drivers
+      ignore_errors: true
+      when: artifacts_copy_status.changed
+      ansible.builtin.shell: |
+        rmmod datadev 2>/dev/null || true
+        systemctl daemon-reload
+        systemctl start datadev.service
+        systemctl enable datadev.service
+      

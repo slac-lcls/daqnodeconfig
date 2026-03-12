@@ -38,6 +38,10 @@ drp-srcf-cmp008
 [wave_drp]
 drp-srcf-cmp004
 drp-srcf-cmp051
+drp-srcf-cmp049
+
+[XPP_wave_drp]
+drp-srcf-cmp049
 
 [hsd_drp]
 drp-srcf-cmp005
@@ -52,7 +56,6 @@ drp-srcf-cmp023
 drp-srcf-cmp024
 drp-srcf-cmp046
 drp-srcf-cmp048
-drp-srcf-cmp049
 drp-srcf-cmp050
 drp-srcf-cmp052
 
@@ -72,6 +75,9 @@ drp-srcf-cmp050
 [RIX_hsd_drp]
 drp-srcf-cmp005
 drp-srcf-cmp009
+
+[XPP_hsd_drp]
+drp-srcf-cmp045
 drp-srcf-cmp052
 
 [camera_drp]

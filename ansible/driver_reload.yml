@@ -3,21 +3,14 @@
 # The playbook checks for the presence of the service file and only proceeds with the driver update if it exists.
 
 # how to run the script
-# ansible-playbook driver_update.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='datadev.ko_6.9.0_rocky9_6' 
+# ansible-playbook driver_reload.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'"
 
 # RM 2026-03-11: Initial version
+
 ---
 - hosts: "{{ host }}"
-  gather_facts: true  # Moved to play level
+  gather_facts: false  # Moved to play level
   become: true         # Moved to play level
-  vars:
-    
-    linux_repo: "{{ ansible_distribution | lower }}"
-    linux_version: "{{ ansible_distribution_version }}"
-    src: '/cds/home/p/psrel/ansible_files/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}'
-    dest: '/usr/local/sbin/datadev.ko'
-    mode: '0755'       # Fixed: valid octal mode
-  
   pre_tasks:
     # ------------------------------------------------------------------ #
     # Validate that required extra vars were passed                        #
@@ -26,33 +19,20 @@
       ansible.builtin.assert:
         that:
           - host is defined and host | length > 0
-          - driver is defined and driver | length > 0
         fail_msg: >
-          Both 'host' and 'driver' must be supplied as
-          extra variables (-e "host=... driver=...").
+          A 'host' must be supplied as
+          extra variables (-e "host=..." ).
  
     # ------------------------------------------------------------------ #
     # Validate that the source file actually exists on the controller     #
     # ------------------------------------------------------------------ #
-    - name: Check that the source driver file exists on the controller
-      ansible.builtin.stat:
-        path: "{{ src }}"
-      register: src_stat
-      delegate_to: localhost
- 
-    - name: Fail if the source driver file is missing
-      ansible.builtin.fail:
-        msg: >
-          Source file '{{ src }}' not found on the Ansible controller.
-          Detected distro: {{ ansible_distribution }} {{ ansible_distribution_version }}.
-      when: not src_stat.stat.exists
 
     - name: Get sevice status
       ansible.builtin.stat:
         path: /etc/systemd/system/datadev.service
       register: service_file_status
 
-    - name: Fail if the service file is not present
+    - name: Abort if service not present
       ansible.builtin.fail:
         msg: "datadev.service not found. Please run files_update.yml instead."
       when: not service_file_status.stat.exists
@@ -60,20 +40,8 @@
   tasks:
     - name: Initial message
       ansible.builtin.debug:
-        msg: "Starting driver update for {{ inventory_hostname }} with driver {{ driver }}"
- 
-    # uploads the files in the node if not the same
-    - name: load files
-      ignore_errors: true
-      register: artifacts_copy_status
-      ansible.builtin.copy:
-        src: "{{ src }}"
-        dest: "{{ dest }}"
-        mode: "{{ mode }}"
-        backup: true
-      notify: install drivers
+        msg: Reloading driver on {{ inventory_hostname }}
 
-  handlers:
     - name: install drivers
       ignore_errors: true
       when: artifacts_copy_status.changed
@@ -82,4 +50,4 @@
         systemctl daemon-reload
         systemctl start datadev.service
         systemctl enable datadev.service
-      
+      when: file_status.stat.exists

@@ -1,11 +1,31 @@
+# This playbook updates the firmware on the nodes. It should be run if datadev.service is already installed
+# otherwise run files_update.yml before.
+
+# how to run the script
+# ansible-playbook firmware_update.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e firmware='hsd'
+
+
+# RM 2026-03-11: Initial version
 
 ---
-- hosts: "{{ variable_host | default('driver_drp') }}"
+- hosts: "{{ host }}"
   gather_facts: false  # Moved to play level
   become: true         # Moved to play level
   vars:
-    firmware: "{{variable_firmware | default('drp/DrpTDet-0x05040300-20250811085743-weaver-846de54')}}"
+    firmwares:
+      hsd:          drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54
+      timing:       drp/DrpTDet-0x05040300-20250811085743-weaver-846de54
+      timingC1100:  drp/DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54
+      wave:         drp/XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff
+      camera:       drp/Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a
+      jungfrau:     drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
+      epix:         drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
+      
   tasks:
+  - name: Initial message
+    ansible.builtin.debug:
+      msg: "Installing new firmware for {{ firmware }}: {{ firmwares[firmware] }} on {{ inventory_hostname }}"
+
   #Check which datadev to use
   - name: Check if datadev_1 exists
     stat:
@@ -37,22 +57,17 @@
     #changed_when: false
     ansible.builtin.shell:
   #    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --package {{ filepath }}{{ firmware }}.mcs --rescan'
-      cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmware }} --rescan False'
-
+      cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmwares[firmware] }} --rescan False'
+    changed_when: "'Firmware already' not in ps.stdout_lines"
+    notify: ipmi_reboot
     when: not ansible_check_mode
-
-  #do not show changes if no firmware has been updated
-  - name: result firmware update
-    ansible.builtin.debug: 
-      var=ps.stdout_lines
-    changed_when: "'Firmware already' in ps.stdout_lines"
-    when: not ansible_check_mode
-
+ 
+  handlers:
   # reset the node if firmware has been changed
-  - name: ipmi reboot    #IF firmware is updated, reset the node
+  - name: ipmi_reboot    #IF firmware is updated, reset the node
     become: true         #in order to run as root use the "-K" option in the command line
     ignore_errors: true  #needs to be true, oherwise the program stops when an error occurs
 
     ansible.builtin.shell: |
       ipmitool power reset
-    when: not ps.stdout_lines is search('Firmware already')
+    

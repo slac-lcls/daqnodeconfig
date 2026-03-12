@@ -1,0 +1,105 @@
+# Mater upload playbook for updating firmware, driver and service on the master nodes. 
+# This playbook is intended to be run from the Ansible control node and will target the 
+# master nodes defined in the inventory file. The playbook will update the firmware, driver 
+# and service for the specified devices on the master nodes. The playbook will also include 
+# a task to restart the service after the update is complete. The playbook is designed to be 
+# idempotent, meaning that it can be run multiple times without causing any issues if the 
+# updates have already been applied.'''
+
+# how to run:
+# ansible-playbook master_update.yml --tags hsd'
+
+# RM 2026-03-11: Initial version
+--- 
+- name: Master update for all devices
+  vars:
+    hsd:
+      host: TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp
+      driver: datadev.ko_6.9.0_rocky9_6
+      service: kcu_hsd.service
+      firmware: hsd
+    wave:
+      host: wave_drp XPP_wave_drp
+      driver: datadev.ko_6.9.0_rocky9_6
+      service: kcu_wave.service
+      firmware: wave
+    camera:
+      host: TMO_camera_drp RIX_camera_drp XPP_camera_drp
+      driver: datadev.ko_6.9.0_rocky9_6
+      service: kcu_camera.service
+      firmware: camera
+    timing:
+      host: TMO_timing_drp RIX_timing_drp XPP_timing_drp
+      driver: datadev.ko_6.9.0_rocky9_6
+      service: tdetsim_high.service
+      firmware: timing
+    hightiming:
+      host: TMO_hightiming_drp RIX_hightiming_drp XPP_timing_drp
+      driver: datadev.ko_6.9.0_rocky9_6
+      service: tdetsim.service 
+      firmware: timing
+    jungfrau:
+      host: TMO_jungfrau_drp RIX_jungfrau_drp XPP_jungfrau_drp
+      driver: datadev.ko_6.9.0_rocky9_6
+      service: kcu_jung.service
+      firmware: jungfrau
+
+- name: Update hsd 
+  vars: 
+    host: "{{ hsd.host }}"
+    driver: "{{ hsd.driver }}"
+    service: "{{ hsd.service }}"
+    firmware: "{{ hsd.firmware }}"
+  task: 
+    include_tasks: srcf_manual.yml      
+  tags: hsd
+  
+- name: Update wave  
+  vars: 
+    host: "{{ wave.host }}"
+    driver: "{{ wave.driver }}"
+    service: "{{ wave.service }}"
+    firmware: "{{ wave.firmware }}"
+  task: 
+    include_tasks: srcf_manual.yml
+  tags: wave
+
+- name: Update camera
+  vars:
+    host: "{{ camera.host }}"
+    driver: "{{ camera.driver }}"
+    service: "{{ camera.service }}"     
+    firmware: "{{ camera.firmware }}"
+  task:
+    include_tasks: srcf_manual.yml   
+  tags: camera    
+  
+- name: Update Timing
+  vars: 
+    host: "{{ timing.host }}"
+    driver: "{{ timing.driver }}"
+    service: "{{ timing.service }}"
+    firmware: "{{ timing.firmware }}"
+  task: 
+    include_tasks: srcf_manual.yml
+  tags: timing
+    
+- name: Update fast timing
+  vars: 
+    host: "{{ hightiming.host }}"
+    driver: "{{ hightiming.driver }}"
+    service: "{{ hightiming.service }}"
+    firmware: "{{ hightiming.firmware }}"
+  task: 
+    include_tasks: srcf_manual.yml
+  tags: hightiming
+
+- name: Update Jungfrau
+  vars: 
+    host: "{{ jungfrau.host }}"
+    driver: "{{ jungfrau.driver }}"
+    service: "{{ jungfrau.service }}"
+    firmware: "{{ jungfrau.firmware }}"
+  task: 
+    include_tasks: srcf_manual.yml
+  tags: jungfrau
