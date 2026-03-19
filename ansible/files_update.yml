@@ -8,6 +8,7 @@
 - hosts: "{{ host }}"
   gather_facts: true  # Moved to play level
   become: true         # Moved to play level
+  ignore_errors: yes # Allows playbook to continue to next host even if one fails (e.g., build error)
   
   vars: 
     path: "/cds/home/p/psrel/ansible_files"
@@ -15,9 +16,9 @@
     linux_version: "{{ ansible_distribution_version }}"
 
     files_name: 
-    - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}',                  dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+    - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}',                   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     - {src: '{{ path }}/services/{{ service }}.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
-    - {src: '{{ path }}/sysctl.conf',                           dest: '/etc/sysctl.conf',                        mode: a+r}
+    - {src: '{{ path }}/sysctl.conf',                           dest: '/etc/sysctl.d/40-datadev-sysctl.conf',    mode: a+r}
   pre_tasks:
     # ------------------------------------------------------------------ #
     # Validate that required extra vars were passed                        #

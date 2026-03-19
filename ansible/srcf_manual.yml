@@ -3,8 +3,7 @@
 
 # How to run the script
 # ansible-playbook srcf_manual.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' 
-# -e driver='datadev.ko_6.9.0_rocky9_6' -e service='kcu_hsd' 
-# -e firmware='drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54'"
+# -e driver='6.9.0' -e service='kcu_hsd' -e firmware='hsd'
 
 # RM 2026-03-11: Initial version
 --- 
@@ -12,9 +11,9 @@
   
   vars: 
     files_name: 
-    - {src: '../files/{{ driver }}',            dest: '/usr/local/sbin/datadev.ko',          mode: a+x}
-    - {src: '../files/{{ service }}.service',   dest: '/etc/systemd/system/datadev.service', mode: a+r}
-    - {src: '../files/sysctl.conf',             dest: '/etc/sysctl.conf',                    mode: a+r}
+    - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}',            dest: '/usr/local/sbin/datadev.ko',           mode: a+x}
+    - {src: '{{ path }}/services/{{ service }}.service',   dest: '/etc/systemd/system/datadev.service',  mode: a+r}
+    - {src: '{{ path }}/sysctl.conf',                      dest: '/etc/sysctl.d/40-datadev-sysctl.conf', mode: a+r}
     
     firmware: drp/{{ firmware }}
   tasks: 

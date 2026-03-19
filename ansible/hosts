@@ -136,33 +136,5 @@ drp-srcf-mon010
 
 
 [driver_drp] # TMO and RIX nodes needing driver update
-drp-srcf-cmp001
-drp-srcf-cmp002
-drp-srcf-cmp003
-drp-srcf-cmp004
-drp-srcf-cmp005
-drp-srcf-cmp006
-drp-srcf-cmp007
-drp-srcf-cmp009
-drp-srcf-cmp010
-drp-srcf-cmp011
-drp-srcf-cmp012
-drp-srcf-cmp013
-drp-srcf-cmp017
-drp-srcf-cmp018
-drp-srcf-cmp019
-drp-srcf-cmp020
-drp-srcf-cmp021
-drp-srcf-cmp022
-drp-srcf-cmp023
-drp-srcf-cmp024
-drp-srcf-cmp025
-drp-srcf-cmp026
-drp-srcf-cmp027
-drp-srcf-cmp028
-drp-srcf-cmp029
-drp-srcf-cmp046
-drp-srcf-cmp048
-drp-srcf-cmp050
-drp-srcf-cmp051
-drp-srcf-cmp052
+drp-srcf-cmp0[01:56]
+

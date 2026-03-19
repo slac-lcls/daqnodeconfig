@@ -9,8 +9,9 @@
 
 ---
 - hosts: "{{ host }}"
-  gather_facts: false  # Moved to play level
-  become: true         # Moved to play level
+  gather_facts: false  # faster execution, we only need the distribution facts in the pre-tasks
+  become: true         # become root 
+  ignore_errors: yes # Allows playbook to continue to next host even if one fails (e.g., build error)
   vars:
     firmwares:
       hsd:          drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54
@@ -21,12 +22,27 @@
       jungfrau:     drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
       epix:         drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
       
-  tasks:
-  - name: Initial message
-    ansible.builtin.debug:
-      msg: "Installing new firmware for {{ firmware }}: {{ firmwares[firmware] }} on {{ inventory_hostname }}"
+  pre-task:
+  - name: Assert required extra variables are defined
+    ansible.builtin.assert:
+      that:
+      - host is defined and host | length > 0
+          - host is defined and host | length > 0
+          - firmware is defined and firmware | length > 0
+      fail_msg: >
+        All 'host', 'host', and 'firmware' must be supplied as
+        extra variables (-e "host=... firmware=...").
 
-  #Check which datadev to use
+  - name: Using user defined firmware name
+    ansible.builtin.set_fact:
+      my_firm: "drp/{{ firmware }}"
+    when: "{{ firmware }} not in firmwares"
+
+  - name: Using firmware from list
+    ansible.builtin.set_fact:
+      my_firm: "{{ firmwares[firmware] }}"
+    when: "{{ firmware }} in firmwares"    
+
   - name: Check if datadev_1 exists
     stat:
       path: /proc/datadev_1
@@ -41,27 +57,35 @@
     set_fact:  
       datadev: datadev_0
     when: not stat_result.stat.exists
-    
+
+  tasks:
+  - name: Initial message
+    ansible.builtin.debug:
+      msg: "Installing new firmware for {{ firmware }}: {{ my_firm }} on {{ inventory_hostname }}"
+
   #updates the firmware, timeout 5 minutes 
   - name: update firmware
     become: true
     ignore_errors: true
-    check_mode: false    
+       
     vars:
       filepath:      "/cds/home/p/psrel/mcs/"
       setup_source:  "source /cds/home/opr/tmoopr/daq/setup_env.sh"
       cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
-    register: ps
+    register: firmware_log
     async: 300  # wait up to 5 minutes s
     poll: 5    # poll every 5 seconds
-    #changed_when: false
+    
     ansible.builtin.shell:
-  #    cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --package {{ filepath }}{{ firmware }}.mcs --rescan'
-      cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ firmwares[firmware] }} --rescan False'
-    changed_when: "'Firmware already' not in ps.stdout_lines"
+      cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }}  --filename {{ filepath }}{{ my_firm }} --rescan False'
+    changed_when: "'Firmware already' not in firmware_log.stdout_lines"
     notify: ipmi_reboot
-    when: not ansible_check_mode
+    
  
+  - name: Show build script output
+    ansible.builtin.debug:
+      msg: "{{ firmware_log.stdout_lines }}"
+
   handlers:
   # reset the node if firmware has been changed
   - name: ipmi_reboot    #IF firmware is updated, reset the node

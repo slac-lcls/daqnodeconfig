@@ -3,7 +3,7 @@
 # The playbook checks for the presence of the service file and only proceeds with the driver update if it exists.
 
 # how to run the script
-# ansible-playbook driver_reload.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'"
+# ansible-playbook driver_reload.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
 
 # RM 2026-03-11: Initial version
 
@@ -11,6 +11,8 @@
 - hosts: "{{ host }}"
   gather_facts: false  # Moved to play level
   become: true         # Moved to play level
+  ignore_errors: yes # Allows playbook to continue to next host even if one fails (e.g., build error)
+
   pre_tasks:
     # ------------------------------------------------------------------ #
     # Validate that required extra vars were passed                        #

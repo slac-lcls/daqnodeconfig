@@ -1,0 +1,78 @@
+---
+# rebuild_driver.yml. It runs in every node sequentially and checks if the driver for the present 
+# distro is already present in the safe folder. If not, it builds the driver and copies it to the safe folder.
+#
+
+- name: Distro-specific driver build and distribution
+  hosts: "{{ host }}"
+  gather_facts: true   # provides ansible_facts.distribution / distribution_version
+  serial: 1            # ONE node at a time — prevents concurrent builds
+  ignore_errors: yes   # Allows playbook to continue to next host even if one fails (e.g., build error)
+
+  vars:
+    build_output_dir: /cds/home/m/melchior/git/aes-stream-drivers/data_dev/driver
+    driver_basename:  datadev.ko
+    safe_folder: /cds/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
+
+  pre_tasks:
+    - name: Display OS distribution and version
+      ansible.builtin.debug:
+        msg: >
+          [{{ inventory_hostname }}]
+          distro={{ ansible_facts['distribution'] }}
+          version={{ ansible_facts['distribution_version'] }}
+          family={{ ansible_facts['os_family'] }}
+ 
+    - name: Assert required extra variables are defined
+      ansible.builtin.assert:
+        that:
+          - host is defined and host | length > 0
+          - driver is defined and driver | length > 0
+        fail_msg: >
+          All 'host', and 'driver' must be supplied as
+          extra variables (-e "host=... driver=...").
+ 
+    - name: Set driver filename for this node
+      ansible.builtin.set_fact:
+        driver_filename: >-
+          {{ driver_basename }}_{{ driver }}_{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_version'] }}
+        driver_safe_path: >-
+          {{ safe_folder }}/{{ driver_basename }}_{{ driver }}_{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_version'] }}
+
+    - name: Check if driver exists in safe folder
+      ansible.builtin.stat:
+        path: "{{ driver_safe_path }}"
+      register: driver_stat
+
+  tasks:
+    - name: Build and deploy driver block
+      when: not driver_stat.stat.exists
+      block:
+        
+        - name: set git to version branch
+          ansible.builtin.command:
+            cmd: "git checkout {{ driver}}"
+            chdir: "/cds/home/m/melchior/git/aes-stream-drivers"
+
+        - name: Run driver build script
+          ansible.builtin.command:
+            cmd: "make driver"
+          args: 
+            chdir: "/cds/home/m/melchior/git/aes-stream-drivers"
+          register: build_result
+          changed_when: build_result.rc == 0
+
+        - name: Show build script output
+          ansible.builtin.debug:
+            msg: "{{ build_result.stdout_lines }}"
+
+        - name: Copy driver to safe folder
+          ansible.builtin.copy:
+            src:  "{{ build_output_dir }}/{{ driver_basename }}"
+            dest: "{{ driver_safe_path }}"
+            mode: "0644"
+            
+        - name: Verify driver is now present in safe folder
+          ansible.builtin.stat:
+            path: "{{ driver_safe_path }}"
+          register: final_stat
