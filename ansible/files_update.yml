@@ -4,6 +4,7 @@
 # ansible-playbook files_update.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='datadev.ko_6.9.0_rocky9_6' -e service='kcu_hsd'
 
 # RM 2026-03-11: Initial version
+# RM 2026-03-26: sysctl.conf is moved into sysctl.d and restarted
 ---
 - hosts: "{{ host }}"
   gather_facts: true  # Moved to play level
@@ -18,7 +19,7 @@
     files_name: 
     - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}',                   dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
     - {src: '{{ path }}/services/{{ service }}.service',        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
-    - {src: '{{ path }}/sysctl.conf',                           dest: '/etc/sysctl.d/40-datadev-sysctl.conf',    mode: a+r}
+    - {src: '{{ path }}/sysctl.conf',                           dest: '/etc/sysctl.d/90-daq.conf',    mode: a+r}
   pre_tasks:
     # ------------------------------------------------------------------ #
     # Validate that required extra vars were passed                        #
@@ -72,6 +73,9 @@
       ansible.builtin.debug:
         msg: "{{ inventory_hostname }} {{ linux_repo }} version {{ linux_version }}"
 
+    - name: modify limits
+      include_tasks: security_limits_modifier.yml
+
     # uploads the files in the node if not the same
     - name: load files
       become: true
@@ -94,4 +98,4 @@
         systemctl daemon-reload
         systemctl start datadev.service
         systemctl enable datadev.service
-      
+        sysctl -p
