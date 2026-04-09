@@ -1,35 +1,28 @@
-# This playbook updates the driver on the nodes. It should be run if datadev.service is already installed
-# otherwise run files_update.yml imstead, 
-# The playbook checks for the presence of the service file and only proceeds with the driver update if it exists.
+# This playbook reloads the datadev driver on the nodes. It should be run if datadev.service is already installed,
+# otherwise run files_update.yml instead.
+# The playbook checks for the presence of the service file and only proceeds with the driver reload if it exists.
 
 # how to run the script
-# ansible-playbook driver_reload.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
+# ansible-playbook driver_reload.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
 
 # RM 2026-03-11: Initial version
 
 ---
 - hosts: "{{ host }}"
-  gather_facts: false  # Moved to play level
-  become: true         # Moved to play level
-  ignore_errors: yes # Allows playbook to continue to next host even if one fails (e.g., build error)
+  gather_facts: false
+  become: true
+  ignore_errors: yes
 
   pre_tasks:
-    # ------------------------------------------------------------------ #
-    # Validate that required extra vars were passed                        #
-    # ------------------------------------------------------------------ #
     - name: Assert required extra variables are defined
       ansible.builtin.assert:
         that:
           - host is defined and host | length > 0
         fail_msg: >
-          A 'host' must be supplied as
-          extra variables (-e "host=..." ).
- 
-    # ------------------------------------------------------------------ #
-    # Validate that the source file actually exists on the controller     #
-    # ------------------------------------------------------------------ #
+          A 'host' must be supplied as an
+          extra variable (-e "host=...").
 
-    - name: Get sevice status
+    - name: Get service status                        
       ansible.builtin.stat:
         path: /etc/systemd/system/datadev.service
       register: service_file_status
@@ -42,14 +35,16 @@
   tasks:
     - name: Initial message
       ansible.builtin.debug:
-        msg: Reloading driver on {{ inventory_hostname }}
+        msg: "Reloading driver on {{ inventory_hostname }}"
+                                                      
 
-    - name: install drivers
-      ignore_errors: true
-      when: artifacts_copy_status.changed
-      ansible.builtin.shell: |
-        rmmod datadev 2>/dev/null || true
-        systemctl daemon-reload
-        systemctl start datadev.service
+    - name: reload driver                             
+      ignore_errors: true                             
+      ansible.builtin.shell: |                        
+        rmmod datadev 2>/dev/null || true             
+        systemctl daemon-reload                       
+        systemctl start datadev.service               
         systemctl enable datadev.service
-      when: file_status.stat.exists
+      when: service_file_status.stat.exists           
+                                                      
+                                                      

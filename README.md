@@ -12,14 +12,14 @@ The scripts are meant to cover different aspects of the administration of the no
   run: ansible-playbook files_update.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd'
 5 firmware_update: It updates the firmware of all host.
   Instead of defining the name of the firmware, the user must provide the type of the node to install the proper firmware.
-  run: ansible-playbook firmware_update.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e firmware='hsd'
+  run: ansible-playbook firmware_update.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e firmware='hsd'
   one can also use firmware file name, withouth _primary.mcs
 6 srcf_manual: It updates files, and firmware and loades the drivers
-  run: ansible-playbook srcf_manual.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd' -e firmware='hsd'
+  run: ansible-playbook srcf_manual.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd' -e firmware='hsd'
 7 master_update: It updates all nodes based on tags:
   run: ansible-playbook master_update.yml --tags hsd
 8 rebuild_driver: It recreate datadev.ko per linux distribution
-  run: ansible-playbook rebuild_driver.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
+  run: ansible-playbook rebuild_driver.yml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
 
 host can be replaced with DNS value, ie: drp-srcf-cmp001. BE AWARE, this works only if the DNS value is present in host file. If DNS value is unknown to host file, it will fail.
 firmware types: hsd, timing, timingC1100, wave, camera, jungfrau, epix

@@ -2,28 +2,121 @@
 # This playbook updates the driver, service, firmware and sysctl.conf on the nodes.
 
 # How to run the script
-# ansible-playbook srcf_manual.yaml -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' 
+# ansible-playbook srcf_manual.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
 # -e driver='6.9.0' -e service='kcu_hsd' -e firmware='hsd'
 
 # RM 2026-03-11: Initial version
---- 
+# RM 2026-04-03: Claude proofed
+---
 - hosts: "{{ host }}"
-  
-  vars: 
-    files_name: 
-    - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}',            dest: '/usr/local/sbin/datadev.ko',           mode: a+x}
-    - {src: '{{ path }}/services/{{ service }}.service',   dest: '/etc/systemd/system/datadev.service',  mode: a+r}
-    - {src: '{{ path }}/sysctl.conf',                      dest: '/etc/sysctl.d/40-datadev-sysctl.conf', mode: a+r}
-    
-    firmware: drp/{{ firmware }}
-  tasks: 
-    - name: initial message
+  gather_facts: true                                  
+  become: true                                        
+  ignore_errors: yes                                  
+
+  vars:
+    path: "/cds/home/p/psrel/ansible_files"          
+    linux_repo: "{{ ansible_distribution | lower }}" 
+    linux_version: "{{ ansible_distribution_version }}"
+
+    files_name:
+      - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}', dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
+      - {src: '{{ path }}/services/{{ service }}.service',                                        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
+      - {src: '{{ path }}/sysctl.conf',                                                           dest: '/etc/sysctl.d/40-datadev-sysctl.conf',    mode: a+r}
+                                                      
+
+    firmwares:                                        
+      hsd:         drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54    
+      timing:      drp/DrpTDet-0x05040300-20250811085743-weaver-846de54      
+      timingC1100: drp/DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54  
+      wave:        drp/XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff
+      camera:      drp/Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a
+      jungfrau:    drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
+      epix:        drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
+
+  pre_tasks:                                          
+    - name: Assert required extra variables are defined 
+      ansible.builtin.assert:
+        that:
+          - host is defined and host | length > 0
+          - driver is defined and driver | length > 0
+          - service is defined and service | length > 0
+          - firmware is defined and firmware | length > 0
+        fail_msg: >
+          All 'host', 'driver', 'service', and 'firmware' must be supplied as
+          extra variables (-e "host=... driver=... service=... firmware=...").
+
+  tasks:
+    - name: Initial message
       ansible.builtin.debug:
-        msg: Master update {{ driver }}, {{ service }}, {{ firmware }} and sysctl.conf on {{ inventory_hostname }}
+        msg: "Master update: driver={{ driver }}, service={{ service }}, firmware={{ firmware }} on {{ inventory_hostname }}"
+                                                      
 
-    - name: load files
-      include_tasks: files_update.yml
-    
-    - name: update firmware
-      include_tasks: firmware_update.yml
+    - name: load files                                
+      ansible.builtin.copy:                           
+        src: "{{ item.src }}"                         
+        dest: "{{ item.dest }}"                       
+        mode: "{{ item.mode }}"                       
+        backup: true
+      with_items: "{{ files_name }}"
+      register: artifacts_copy_status
+      notify: install drivers
 
+    - name: Set firmware path from lookup
+      ansible.builtin.set_fact:
+        my_firm: "{{ firmwares[firmware] }}"
+      when: firmware in firmwares
+
+    - name: Set firmware path from raw value
+      ansible.builtin.set_fact:
+        my_firm: "drp/{{ firmware }}"
+      when: firmware not in firmwares
+
+    - name: Check if datadev_1 exists               
+      ansible.builtin.stat:
+        path: /proc/datadev_1
+      register: stat_result
+
+    - name: Set datadev to datadev_1
+      ansible.builtin.set_fact:
+        datadev: datadev_1
+      when: stat_result.stat.exists
+
+    - name: Set datadev to datadev_0
+      ansible.builtin.set_fact:
+        datadev: datadev_0
+      when: not stat_result.stat.exists
+
+    - name: Update firmware
+      ignore_errors: true
+      ansible.builtin.shell:
+        cmd: >
+          source /cds/home/opr/tmoopr/daq/setup_env.sh ;
+          cd /cds/home/p/psrel/git/pgp-pcie-apps/software/ ;
+          python ./scripts/updatePcieFpga.py
+          --dev /dev/{{ datadev }}
+          --filename /cds/home/p/psrel/mcs/{{ my_firm }}
+          --rescan False
+      register: firmware_log
+      async: 300
+      poll: 5
+      changed_when: "'Firmware already' not in firmware_log.stdout_lines"
+      notify: ipmi_reboot
+
+    - name: Show firmware output
+      ansible.builtin.debug:
+        msg: "{{ firmware_log.stdout_lines }}"
+
+  handlers:
+    - name: install drivers                           
+      ignore_errors: true
+      ansible.builtin.shell: |
+        rmmod datadev 2>/dev/null || true
+        systemctl daemon-reload
+        systemctl start datadev.service
+        systemctl enable datadev.service
+        sysctl -p /etc/sysctl.d/40-datadev-sysctl.conf
+
+    - name: ipmi_reboot
+      ignore_errors: true
+      ansible.builtin.shell: |
+        ipmitool power reset

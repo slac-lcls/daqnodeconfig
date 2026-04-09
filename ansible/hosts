@@ -138,3 +138,8 @@ drp-srcf-mon010
 [driver_drp] # TMO and RIX nodes needing driver update
 drp-srcf-cmp0[01:56]
 
+[fee_drp]
+drp-neh-cmp022
+
+[camera_ued]
+drp-ued-cmp004

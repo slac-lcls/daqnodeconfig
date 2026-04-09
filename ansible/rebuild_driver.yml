@@ -2,6 +2,10 @@
 # rebuild_driver.yml. It runs in every node sequentially and checks if the driver for the present 
 # distro is already present in the safe folder. If not, it builds the driver and copies it to the safe folder.
 #
+# how to run the script
+# ansible-playbook rebuild_driver.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
+
+# RM 2026-04-09: Initial version
 
 - name: Distro-specific driver build and distribution
   hosts: "{{ host }}"

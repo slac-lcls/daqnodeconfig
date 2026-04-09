@@ -1,43 +1,41 @@
 # This playbook updates /etc/security/limits.conf
-# 
+#
 # how to run the script
-# ansible-playbook security_limits_modifier.yml -e host='TMO_hsd_drp'
+# ansible-playbook security_limits_modifier.yml -K -e host='TMO_hsd_drp'
 
 # RM 2026-03-26: Initial version
-
+# RM 2026-04-03: Claude proofed
 ---
 - hosts: "{{ host }}"
-  gather_facts: true  # Moved to play level
-  become: true         # Moved to play level
-  ignore_errors: yes # Allows playbook to continue to next host even if one fails (e.g., build error)
-  
+  gather_facts: true
+  become: true
+  ignore_errors: yes
+
   vars:
     target_file: /etc/security/limits.conf
     linux_repo: "{{ ansible_distribution }}"
 
-    config_lines:
-        - { regexp: '^\* soft memlock', line: '* soft memlock unlimited' }
-        - { regexp: '^\* hard memlock', line: '* hard memlock unlimited' }
-        - { regexp: '^\* soft core',    line: '* soft core 0' }
-        - { regexp: '^\* hard core',    line: '* hard core unlimited' }
-  
+    config_lines:                                     
+      - { regexp: '^\* soft memlock', line: '* soft memlock unlimited' }
+      - { regexp: '^\* hard memlock', line: '* hard memlock unlimited' }
+      - { regexp: '^\* soft core',    line: '* soft core 0' }
+      - { regexp: '^\* hard core',    line: '* hard core unlimited' }
+
   pre_tasks:
-    # ------------------------------------------------------------------ #
-    # Validate that required extra vars were passed                        #
-    # ------------------------------------------------------------------ #
     - name: Assert required extra variables are defined
       ansible.builtin.assert:
         that:
           - host is defined and host | length > 0
         fail_msg: >
-          'host'  must be supplied as
-          extra variables (-e "host=... ).
- 
+          'host' must be supplied as an
+          extra variable (-e "host=...").  
+
   tasks:
-    - name: initial message
+    - name: Initial message
       ansible.builtin.debug:
-        msg: Checking /etc/security/limits.conf
-    
+        msg: "Checking /etc/security/limits.conf"     
+                                                      
+
     - name: OS Distribution
       ansible.builtin.debug:
         msg: "OS repo is: {{ linux_repo }}"
@@ -51,4 +49,6 @@
         backup: yes
         create: yes
       loop: "{{ config_lines }}"
-      when: linux_repo == "Rocky"
+      when: linux_repo == "Rocky"                     
+                                                      
+                                                      
