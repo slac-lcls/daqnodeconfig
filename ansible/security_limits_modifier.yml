@@ -20,6 +20,7 @@
       - { regexp: '^\* hard memlock', line: '* hard memlock unlimited' }
       - { regexp: '^\* soft core',    line: '* soft core 0' }
       - { regexp: '^\* hard core',    line: '* hard core unlimited' }
+      
 
   pre_tasks:
     - name: Assert required extra variables are defined

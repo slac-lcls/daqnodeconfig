@@ -37,7 +37,7 @@
       ansible.builtin.stat:
         path: "{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}"
       register: src_stat
-      delegate_to: localhost
+      
 
     - name: Fail if the source driver file is missing
       ansible.builtin.fail:
@@ -51,7 +51,7 @@
       ansible.builtin.stat:
         path: "{{ path }}/services/{{ service }}.service"
       register: service_stat
-      delegate_to: localhost
+      
 
     - name: Fail if the source service file is missing
       ansible.builtin.fail:
@@ -83,12 +83,12 @@
       notify: install drivers
 
   handlers:
-    - name: install drivers
-      ignore_errors: true
-      ansible.builtin.shell: |
-        rmmod datadev 2>/dev/null || true
-        systemctl daemon-reload
-        systemctl start datadev.service
-        systemctl enable datadev.service
-        sysctl -p /etc/sysctl.d/90-daq.conf    
+   - name: install drivers
+     ignore_errors: true
+     ansible.builtin.shell: |
+       rmmod datadev 2>/dev/null || true
+       systemctl daemon-reload
+       systemctl start datadev.service
+       systemctl enable datadev.service
+       sysctl -p /etc/sysctl.d/90-daq.conf    
                                                

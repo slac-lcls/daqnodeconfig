@@ -21,6 +21,10 @@
       jungfrau:     drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
       epix:         drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
 
+    filepath:      "/cds/home/p/psrel/mcs/"
+    setup_source:  "source /cds/home/opr/tmoopr/daq/setup_env.sh"
+    cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
+     
   pre_tasks:                                        
     - name: Assert required extra variables are defined
       ansible.builtin.assert:
@@ -59,17 +63,13 @@
   tasks:
     - name: Initial message
       ansible.builtin.debug:
-        msg: "Installing new firmware for {{ firmware }}: {{ my_firm }} on {{ inventory_hostname }}"
+        msg: "Installing new firmware: python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ my_firm }} --rescan False"
 
     - name: update firmware              
       become: true
       ignore_errors: true
       ansible.builtin.shell:
         cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ my_firm }} --rescan False'
-      vars:
-        filepath:      "/cds/home/p/psrel/mcs/"
-        setup_source:  "source /cds/home/opr/tmoopr/daq/setup_env.sh"
-        cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
       register: firmware_log
       async: 300
       poll: 5
