@@ -16,7 +16,7 @@
   vars:
     build_output_dir: /cds/home/m/melchior/git/aes-stream-drivers/data_dev/driver
     driver_basename:  datadev.ko
-    safe_folder: /cds/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
+    safe_folder: /sdf/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
 
   pre_tasks:
     - name: Display OS distribution and version
