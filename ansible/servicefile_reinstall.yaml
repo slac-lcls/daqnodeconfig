@@ -1,0 +1,27 @@
+# This playbook reinstall datadev.service file to /etc/systemd/system/datadev.service from backup file in /sdf/home/p/psrel/ansible_files/datadev_service_files/datadev.service.<hostname>
+#
+# how to run the script
+# ansible-playbook servicefile_reinstall.yaml -K 
+
+# RM 2026-03-26: Initial version
+# RM 2026-04-03: Claude proofed
+---
+- name: Distribute files to matching nodes
+  hosts: rocky9
+  tasks:
+    - name: Check if source file exists
+      ansible.builtin.stat:
+        path: "/sdf/home/p/psrel/ansible_files/datadev_service_files/datadev.service.{{ inventory_hostname }}"
+      delegate_to: localhost
+      become: no
+      register: src_file
+
+    - name: Copy file to matching hostname
+      ansible.builtin.copy:
+        src: "/sdf/home/p/psrel/ansible_files/datadev_service_files/datadev.service.{{ inventory_hostname }}"
+        dest: "/etc/systemd/system/datadev.service"
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+      when: src_file.stat.exists

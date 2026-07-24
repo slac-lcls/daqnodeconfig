@@ -146,3 +146,6 @@ drp-ued-cmp004
 
 [xpp_drp]
 drp-srcf-mon008
+
+[rocky9]
+drp-srcf-cmp0[01:56]
