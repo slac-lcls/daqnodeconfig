@@ -3,8 +3,7 @@
 # how to run the script
 # ansible-playbook servicefile_reinstall.yaml -K 
 
-# RM 2026-03-26: Initial version
-# RM 2026-04-03: Claude proofed
+# RM 2026-07-26: Initial version
 ---
 - name: Distribute files to matching nodes
   hosts: rocky9

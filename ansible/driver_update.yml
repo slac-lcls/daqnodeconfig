@@ -7,6 +7,7 @@
 
 # RM 2026-03-11: Initial version
 # RM 2026-04-03: Claude proofed
+
 ---
 - hosts: "{{ host }}"
   gather_facts: true
@@ -45,7 +46,7 @@
 
     - name: Get service status                        
         ansible.builtin.stat:
-        path: /etc/systemd/system/datadev.service
+          path: /etc/systemd/system/datadev.service
       register: service_file_status
 
     - name: Fail if the service file is not present

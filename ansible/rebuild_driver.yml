@@ -14,7 +14,7 @@
   ignore_errors: yes   # Allows playbook to continue to next host even if one fails (e.g., build error)
 
   vars:
-    build_output_dir: /sdf/home/p/psrel/git/aes-stream-drivers/data_dev/driver
+    build_output_dir: /sdf/home/m/melchior/git/git/aes-stream-drivers/data_dev/driver
     driver_basename:  datadev.ko
     safe_folder: /sdf/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
 
@@ -56,13 +56,13 @@
         - name: set git to version branch
           ansible.builtin.command:
             cmd: "git checkout {{ driver}}"
-            chdir: "/sdf/home/p/psrel/git/aes-stream-drivers"
+            chdir: "/sdf/home/m/melchior/git/git/aes-stream-drivers"
 
         - name: Run driver build script
           ansible.builtin.command:
             cmd: "make driver"
           args: 
-            chdir: "/sdf/home/p/psrel/git/aes-stream-drivers"
+            chdir: "/sdf/home/m/melchior/git/git/aes-stream-drivers"
           register: build_result
           changed_when: build_result.rc == 0
 
