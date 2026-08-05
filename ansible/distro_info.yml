@@ -8,12 +8,12 @@
 ---
 - hosts: "{{ host }}"
   tasks:
-    - name: Find Linux distro
+    - name: Linux distro
       ansible.builtin.setup:
         filter: ansible_distribution
       register: distro_info
 
-    - name: Find Linux version
+    - name: Linux version
       ansible.builtin.setup:
         filter: ansible_distribution_version
       register: version_info

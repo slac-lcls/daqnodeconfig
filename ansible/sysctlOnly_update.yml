@@ -9,7 +9,6 @@
 - hosts: "{{ host }}"
   gather_facts: false
   become: true
-  ignore_errors: yes
 
   vars: 
     path: "/sdf/home/p/psrel/ansible_files"
@@ -21,7 +20,6 @@
                                                           
     - name: load files
       become: true
-      ignore_errors: true
       ansible.builtin.copy:                               
         src: '{{ path }}/sysctl.conf'
         dest: '/etc/sysctl.d/90-daq.conf'
@@ -31,7 +29,7 @@
 
   handlers:
    - name: install drivers
-     ignore_errors: true
+     
      ansible.builtin.shell: |
        sysctl -p /etc/sysctl.d/90-daq.conf    
                                                

@@ -10,11 +10,14 @@
 - name: Distro-specific driver build and distribution
   hosts: "{{ host }}"
   gather_facts: true   # provides ansible_facts.distribution / distribution_version
+  gather_subset:  # for faster loading of facts, only gather minimal facts and not all facts
+  - '!all'
+  - 'min'
+  become: false
   serial: 1            # ONE node at a time — prevents concurrent builds
-  ignore_errors: yes   # Allows playbook to continue to next host even if one fails (e.g., build error)
 
   vars:
-    build_output_dir: /sdf/home/m/melchior/git/git/aes-stream-drivers/data_dev/driver
+    build_output_dir: /sdf/home/m/melchior/git/aes-stream-drivers/data_dev/driver
     driver_basename:  datadev.ko
     safe_folder: /sdf/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
 
@@ -41,7 +44,7 @@
         driver_filename: >-
           {{ driver_basename }}_{{ driver }}_{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_version'] }}
         driver_safe_path: >-
-          {{ safe_folder }}/{{ driver_basename }}_{{ driver }}_{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_version'] }}
+          {{ safe_folder }}/{{ driver_basename }}_{{ driver }}_{{ ansible_facts['distribution'] | lower }}_{{ ansible_facts['distribution_version'] }}
 
     - name: Check if driver exists in safe folder
       ansible.builtin.stat:
@@ -56,13 +59,13 @@
         - name: set git to version branch
           ansible.builtin.command:
             cmd: "git checkout {{ driver}}"
-            chdir: "/sdf/home/m/melchior/git/git/aes-stream-drivers"
+            chdir: "/sdf/home/m/melchior/git/aes-stream-drivers"
 
         - name: Run driver build script
           ansible.builtin.command:
             cmd: "make driver"
           args: 
-            chdir: "/sdf/home/m/melchior/git/git/aes-stream-drivers"
+            chdir: "/sdf/home/m/melchior/git/aes-stream-drivers"
           register: build_result
           changed_when: build_result.rc == 0
 
