@@ -17,9 +17,9 @@
   serial: 1            # ONE node at a time — prevents concurrent builds
 
   vars:
-    build_output_dir: /sdf/home/m/melchior/git/aes-stream-drivers/data_dev/driver
+    build_output_dir: /cds/home/m/melchior/git/aes-stream-drivers/data_dev/driver
     driver_basename:  datadev.ko
-    safe_folder: /sdf/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
+    safe_folder: /cds/home/p/psrel/ansible_files/datadev/tmp  # This should be set to the actual safe folder path
 
   pre_tasks:
     - name: Display OS distribution and version
@@ -59,13 +59,13 @@
         - name: set git to version branch
           ansible.builtin.command:
             cmd: "git checkout {{ driver}}"
-            chdir: "/sdf/home/m/melchior/git/aes-stream-drivers"
+            chdir: "/cds/home/m/melchior/git/aes-stream-drivers"
 
         - name: Run driver build script
           ansible.builtin.command:
             cmd: "make driver"
           args: 
-            chdir: "/sdf/home/m/melchior/git/aes-stream-drivers"
+          chdir: "/cds/home/m/melchior/git/aes-stream-drivers"
           register: build_result
           changed_when: build_result.rc == 0
 

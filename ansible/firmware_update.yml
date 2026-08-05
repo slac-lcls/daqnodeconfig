@@ -20,9 +20,9 @@
       jungfrau:     drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
       epix:         drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
 
-    filepath:      "/sdf/home/p/psrel/mcs/"
-    setup_source:  "source /sdf/home/x/xppopr/daq/scripts/setup_env.sh"
-    cd_cameralink: "cd /sdf/home/p/psrel/git/pgp-pcie-apps/software/"
+    filepath:      "/cds/home/p/psrel/mcs/"
+    setup_source:  "source /cds/home/x/xppopr/daq/scripts/setup_env.sh"
+    cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
      
   pre_tasks:                                        
     - name: Assert required extra variables are defined

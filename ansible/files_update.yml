@@ -16,7 +16,7 @@
   
 
   vars: 
-    path: "/sdf/home/p/psrel/ansible_files"
+    path: "/cds/home/p/psrel/ansible_files"
     linux_repo: "{{ ansible_distribution }}"
     linux_version: "{{ ansible_distribution_version }}"
 

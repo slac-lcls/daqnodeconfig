@@ -16,7 +16,7 @@
   become: true                                                                     
 
   vars:
-    path: "/sdf/home/p/psrel/ansible_files"          
+    path: "/cds/home/p/psrel/ansible_files"          
     linux_repo: "{{ ansible_distribution | lower }}" 
     linux_version: "{{ ansible_distribution_version }}"
 
@@ -91,11 +91,11 @@
     - name: Update firmware
       ansible.builtin.shell:
         cmd: >
-          source /sdf/home/x/xppopr/daq/scripts/setup_env.sh ;
-          cd /sdf/home/p/psrel/git/pgp-pcie-apps/software/ ;
+          source /cds/home/x/xppopr/daq/scripts/setup_env.sh ;
+          cd /cds/home/p/psrel/git/pgp-pcie-apps/software/ ;
           python ./scripts/updatePcieFpga.py
           --dev /dev/{{ datadev }}
-          --filename /sdf/home/p/psrel/mcs/{{ my_firm }}
+          --filename /cds/home/p/psrel/mcs/{{ my_firm }}
           --rescan False
       register: firmware_log
       async: 300

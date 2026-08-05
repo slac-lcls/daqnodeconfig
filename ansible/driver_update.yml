@@ -21,7 +21,7 @@
     
     repo: "{{ ansible_distribution | lower }}"
     version: "{{ ansible_distribution_version }}"
-    src: '/sdf/home/p/psrel/ansible_files/datadev/datadev.ko_{{ driver }}_{{ repo }}_{{ version }}'
+    src: '/cds/home/p/psrel/ansible_files/datadev/datadev.ko_{{ driver }}_{{ repo }}_{{ version }}'
     dest: '/usr/local/sbin/datadev.ko'
     mode: '0755'
   
