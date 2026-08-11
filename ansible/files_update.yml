@@ -17,7 +17,7 @@
 
   vars: 
     path: "/cds/home/p/psrel/ansible_files"
-    linux_repo: "{{ ansible_distribution }}"
+    linux_repo: "{{ ansible_distribution | lower }}"
     linux_version: "{{ ansible_distribution_version }}"
 
     files_name: 

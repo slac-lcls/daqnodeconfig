@@ -34,7 +34,7 @@
 
     - name: Reload driver                     
       ansible.builtin.shell: |                        
-        #        rmmod datadev 2>/dev/null || true             
+        rmmod datadev 2>/dev/null || true             
         systemctl daemon-reload                       
         systemctl start datadev.service               
         systemctl enable datadev.service

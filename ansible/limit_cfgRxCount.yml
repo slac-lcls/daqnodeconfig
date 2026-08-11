@@ -1,0 +1,30 @@
+# Make sure that the cfgRxCount value in the kcu1500.service file is not above 65532. If it is, set it to 65532.
+
+---
+- hosts: "{{ host }}"
+  become: true
+  gather_facts: false
+  
+  tasks:
+  - name: Read current cfgRxCount value
+    shell: >
+      grep -oP '^ExecStart=.*cfgRxCount=\K\d+'
+      /etc/systemd/system/datadev.service
+    register: current_rxcount
+    changed_when: false
+
+  - name: Update cfgRxCount if it's above 65000
+    replace:
+      path: /etc/systemd/system/datadev.service
+      regexp: '^(ExecStart=.*cfgRxCount=)\d+'
+      replace: '\g<1>65532'
+    when: current_rxcount.stdout | int > 65532
+    notify: Reinstall
+
+  handlers:
+  - name: Reinstall
+    ansible.builtin.shell: |
+      rmmod datadev 2>/dev/null || true
+      systemctl daemon-reload
+      systemctl start datadev.service
+      systemctl enable datadev.service

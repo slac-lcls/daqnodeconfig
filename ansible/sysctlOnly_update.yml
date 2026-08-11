@@ -11,7 +11,7 @@
   become: true
 
   vars: 
-    path: "/cds/home/p/psrel/ansible_files"
+    path: "/sdf/home/p/psrel/ansible_files"
                                                          
   tasks:
     - name: initial message
