@@ -4,7 +4,7 @@
 # how to run the script
 # ansible-playbook servicefile_single_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e value='6400' -e var=cfgRxCount
 
---
+---
 
 - hosts: "{{ host }}"
   become: true
