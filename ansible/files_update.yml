@@ -24,7 +24,7 @@
       - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}', dest: '/usr/local/sbin/datadev.ko',         mode: a+x}
       - {src: '{{ path }}/services/{{ service }}.service',                                        dest: '/etc/systemd/system/datadev.service', mode: a+r}
       - {src: '{{ path }}/sysctl.conf',                                                           dest: '/etc/sysctl.d/90-daq.conf',           mode: a+r}
-                                                         
+      - {src: '{{ path }}/pci.ids',                                                               dest: '/usr/share/hwdata/pci.ids',           mode: a+r}
   pre_tasks:
     - name: Assert required extra variables are defined
       ansible.builtin.assert:
