@@ -1,0 +1,43 @@
+# This playbook updates the cfgRxCount parameter in the ExecStart line of the kcu1500.service file to 6400.
+# It should be run if datadev.service is already installed, otherwise run files_update.yml before
+
+# how to run the script
+# ansible-playbook servicefile_single_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e value='6400' -e var=cfgRxCount
+
+--
+
+- hosts: "{{ host }}"
+  become: true
+
+  pre_tasks:
+    - name: Are the required extra variables defined?
+      ansible.builtin.assert:
+        that:
+          - host is defined and host | length > 0
+          - var is defined and value | length > 0
+          - value is defined and value | length > 0
+        fail_msg: >
+          'host','var','value' must be supplied as
+          extra variables (-e "host=... var=... value=...").
+    
+    - name: Check that the source service file exists on the controller
+      ansible.builtin.stat:
+        path: "/etc/systemd/system/datadev.service"
+      register: service_stat
+      failed_when: not service_stat.stat.exists
+
+  tasks:
+    - name: Update the active ExecStart line
+      replace:
+        path: /etc/systemd/system/datadev.service
+        regexp: '^(ExecStart=.*{{ var }}=)\d+'
+        replace: '\g<1>{{ value }}'
+      notify: Reinstall
+
+  handlers:
+    - name: Reinstall
+      ansible.builtin.shell: |
+        rmmod datadev 2>/dev/null || true
+        systemctl daemon-reload
+        systemctl start datadev.service
+        systemctl enable datadev.service

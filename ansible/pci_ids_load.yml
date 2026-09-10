@@ -1,0 +1,39 @@
+# This playbook updates the driver and service files on the nodes. 
+# 
+# how to run the script
+# ansible-playbook pci_ids_load.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
+
+# RM 2026-08-12: Initial version
+
+
+---
+- hosts: "{{ host }}"
+  gather_facts: false
+  become: true
+  
+
+  vars: 
+    path: "/sdf/home/p/psrel/ansible_files"
+  
+  pre_tasks:
+    - name: Assert required extra variables are defined
+      ansible.builtin.assert:
+        that:
+          - host is defined and host | length > 0
+        fail_msg: >
+          'host' must be supplied as
+          an extra variable (-e "host=...").
+
+  tasks:
+    - name: initial message
+      ansible.builtin.debug:
+        msg: "Installing new pci.ids file on {{ inventory_hostname }}"
+                                                          
+    - name: load file
+      become: true
+      ansible.builtin.copy:                               
+        src: "{{ path }}/pci.ids"
+        dest: "/usr/share/hwdata/pci.ids"
+        mode: "a+r"
+        backup: true
+                                                     
