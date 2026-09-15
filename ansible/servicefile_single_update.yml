@@ -1,4 +1,5 @@
-# This playbook updates the cfgRxCount parameter in the ExecStart line of the kcu1500.service file to 6400.
+# This playbook updates the specified parameter in the ExecStart line of the datadev.service file to the given value.
+# If the parameter is not already present on the ExecStart line, it will be added.
 # It should be run if datadev.service is already installed, otherwise run files_update.yml before
 
 # how to run the script
@@ -19,19 +20,45 @@
         fail_msg: >
           'host','var','value' must be supplied as
           extra variables (-e "host=... var=... value=...").
-    
+
     - name: Check that the source service file exists on the controller
       ansible.builtin.stat:
         path: "/etc/systemd/system/datadev.service"
       register: service_stat
       failed_when: not service_stat.stat.exists
 
+    - name: Check whether the ExecStart line exists
+      ansible.builtin.command: grep -E '^ExecStart=' /etc/systemd/system/datadev.service
+      register: execstart_check
+      changed_when: false
+      failed_when: execstart_check.rc > 1
+
+    - name: Fail if no ExecStart line is present
+      ansible.builtin.fail:
+        msg: "No ExecStart line found in /etc/systemd/system/datadev.service"
+      when: execstart_check.rc != 0
+
+    - name: Check whether var is already present on the ExecStart line
+      ansible.builtin.command: grep -E '^ExecStart=.*{{ var }}=\d+' /etc/systemd/system/datadev.service
+      register: var_check
+      changed_when: false
+      failed_when: var_check.rc > 1
+
   tasks:
-    - name: Update the active ExecStart line
-      replace:
+    - name: Update var on the ExecStart line if already present
+      ansible.builtin.replace:
         path: /etc/systemd/system/datadev.service
         regexp: '^(ExecStart=.*{{ var }}=)\d+'
         replace: '\g<1>{{ value }}'
+      when: var_check.rc == 0
+      notify: Reinstall
+
+    - name: Append var to the ExecStart line if not present
+      ansible.builtin.replace:
+        path: /etc/systemd/system/datadev.service
+        regexp: '^(ExecStart=.*\S)\s*$'
+        replace: '\g<1> {{ var }}={{ value }}'
+      when: var_check.rc != 0
       notify: Reinstall
 
   handlers:

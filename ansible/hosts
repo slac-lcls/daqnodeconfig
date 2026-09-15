@@ -144,6 +144,9 @@ drp-neh-cmp022
 [camera_ued]
 drp-ued-cmp004
 
+[ued_drp]
+drp-ued-cmp00[1:4]
+
 [xpp_drp]
 drp-srcf-mon008
 
