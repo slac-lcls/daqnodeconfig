@@ -23,7 +23,7 @@
     files_name:
       - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}', dest: '/usr/local/sbin/datadev.ko',              mode: a+x}
       - {src: '{{ path }}/services/{{ service }}.service',                                        dest: '/etc/systemd/system/datadev.service',     mode: a+r}
-      - {src: '{{ path }}/sysctl.conf',                                                           dest: '/etc/sysctl.d/40-datadev-sysctl.conf',    mode: a+r}
+      - {src: '{{ path }}/sysctl.conf',                                                           dest: '/etc/sysctl.d/90-daq.conf',    mode: a+r}
                                                       
 
     firmwares:                                        
@@ -114,7 +114,7 @@
         systemctl daemon-reload
         systemctl start datadev.service
         systemctl enable datadev.service
-        sysctl -p /etc/sysctl.d/40-datadev-sysctl.conf
+        sysctl -p /etc/sysctl.d/90-daq.conf
 
     - name: ipmi_reboot
       ansible.builtin.shell: |
