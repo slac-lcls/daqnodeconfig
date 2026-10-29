@@ -376,20 +376,25 @@ ansible-playbook backup_servicefile.yml \
 
 ---
 
-## Shared Handler Pattern
+## Shared Steps and Handlers
 
-Most playbooks use a common handler sequence triggered when files change:
+The update playbooks are built from shared steps, so each one is the previous one plus more steps:
 
-```bash
-rmmod datadev 2>/dev/null || true
-systemctl daemon-reload
-systemctl start datadev.service
-systemctl enable datadev.service
-# (some playbooks also run:)
-sysctl -p /etc/sysctl.d/90-daq.conf
-```
+| Playbook | Steps |
+|---|---|
+| `driver_update.yml` | preflight, service_present, driver |
+| `files_noservice_update.yml` | preflight, service_present, driver, sysctl, pci_ids |
+| `files_update.yml` | preflight, driver, service, sysctl |
+| `srcf_manual.yml` | preflight, driver, service, sysctl, firmware |
+| `firmware_update.yml` | preflight, firmware |
+| `sysctlOnly_update.yml` | preflight, sysctl |
+| `pci_ids_load.yml` | preflight, pci_ids |
 
-Firmware-flashing playbooks trigger `ipmitool power reset` instead, since a full power cycle is required for FPGA firmware to take effect.
+- `group_vars/all.yml` — paths, driver/service file naming, sysctl destination and the firmware list, defined once. Any value can be overridden with `-e`.
+- `tasks/*.yml` — one step each. `preflight.yml` checks the variables listed in the playbook's `required_vars`.
+- `handlers/datadev.yml` — `reload datadev` (rmmod, daemon-reload, start/enable `datadev.service`; skipped if the node has no `datadev.service`), `apply sysctl` (`sysctl -p /etc/sysctl.d/90-daq.conf`) and `ipmi reset` (`ipmitool power reset`, after new firmware). Handlers run once at the end of the play, so the driver is reloaded once and the reset is always last.
+
+In `--check` mode the firmware step only prints the `updatePcieFpga.py` command it would run.
 
 ---
 

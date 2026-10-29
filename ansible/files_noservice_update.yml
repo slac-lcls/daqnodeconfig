@@ -1,5 +1,6 @@
 # This playbook updates the driver, sysctl.conf and pci.ids on the nodes, leaving datadev.service untouched.
 # Use it on nodes that already have the correct datadev.service, otherwise run files_update.yml instead.
+# = driver_update.yml + sysctl + pci.ids
 #
 # how to run the script
 # ansible-playbook files_noservice_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
@@ -7,64 +8,24 @@
 # RM 2026-03-11: Initial version
 # RM 2026-03-26: sysctl.conf is moved into sysctl.d and restarted
 # RM 2026-04-03: claude proofed
+# 2026-10-28: rebuilt from the shared steps in tasks/ (Claude)
 ---
 - hosts: "{{ host }}"
   gather_facts: true
   gather_subset:  # for faster loading of facts, only gather minimal facts and not all facts
-  - '!all'    
+  - '!all'
   - 'min'
   become: true
-  
 
-  vars: 
-    path: "/sdf/home/p/psrel/ansible_files"
-    linux_repo: "{{ ansible_distribution | lower }}"
-    linux_version: "{{ ansible_distribution_version }}"
-
-    files_name: 
-      - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}', dest: '/usr/local/sbin/datadev.ko',         mode: a+x}
-      - {src: '{{ path }}/sysctl.conf',                                                           dest: '/etc/sysctl.d/90-daq.conf',           mode: a+r}
-      - {src: '{{ path }}/pci.ids',                                                               dest: '/usr/share/hwdata/pci.ids',           mode: a+r}
-  pre_tasks:
-    - name: Assert required extra variables are defined
-      ansible.builtin.assert:
-        that:
-          - host is defined and host | length > 0
-          - driver is defined and driver | length > 0
-        fail_msg: >
-          All 'host', and 'driver' must be supplied as
-          extra variables (-e "host=... driver=...").
-
-    - name: Check that the source driver file exists on the controller
-      ansible.builtin.stat:
-        path: "{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}"
-      register: src_stat
-      delegate_to: localhost
-      become: false
-      failed_when: not src_stat.stat.exists
+  vars:
+    required_vars: [host, driver]
 
   tasks:
-    - name: initial message
-      ansible.builtin.debug:
-        msg: "Installing new files {{ driver }}, and sysctl.conf on {{ inventory_hostname }}"
-                                                          
-    - name: load files
-      become: true
-      ansible.builtin.copy:                               
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        mode: "{{ item.mode }}"
-        backup: true
-      with_items: "{{ files_name }}"
-      register: artifacts_copy_status
-      notify: install drivers
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/service_present.yml
+    - ansible.builtin.import_tasks: tasks/driver.yml
+    - ansible.builtin.import_tasks: tasks/sysctl.yml
+    - ansible.builtin.import_tasks: tasks/pci_ids.yml
 
   handlers:
-   - name: install drivers
-     ansible.builtin.shell: |
-       rmmod datadev 2>/dev/null || true
-       systemctl daemon-reload
-       systemctl start datadev.service
-       systemctl enable datadev.service
-       sysctl -p /etc/sysctl.d/90-daq.conf    
-                                               
+    - ansible.builtin.import_tasks: handlers/datadev.yml

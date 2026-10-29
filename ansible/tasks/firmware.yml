@@ -1,0 +1,40 @@
+# Flashes the KCU firmware. The node is power-cycled at the end of the play if new firmware was written.
+- name: Set firmware path
+  ansible.builtin.set_fact:
+    my_firm: "{{ firmwares[firmware] if firmware in firmwares else 'drp/' ~ firmware }}"
+
+- name: Check if datadev_1 exists
+  ansible.builtin.stat:
+    path: /proc/datadev_1
+  register: datadev_1_stat
+
+- name: Select datadev device
+  ansible.builtin.set_fact:
+    datadev: "{{ 'datadev_1' if datadev_1_stat.stat.exists else 'datadev_0' }}"
+
+# async tasks cannot run in --check mode, so a dry run only reports what would be flashed
+- name: Would update firmware (check mode)
+  ansible.builtin.debug:
+    msg: "Would run updatePcieFpga.py --dev /dev/{{ datadev }} --filename {{ firmware_dir }}/{{ my_firm }}"
+  when: ansible_check_mode
+
+- name: Update firmware to {{ my_firm }}
+  ansible.builtin.shell:
+    cmd: >
+      source {{ firmware_setup }} ;
+      cd {{ firmware_sw_dir }} ;
+      python ./scripts/updatePcieFpga.py
+      --dev /dev/{{ datadev }}
+      --filename {{ firmware_dir }}/{{ my_firm }}
+      --rescan False
+  register: firmware_log
+  async: 300
+  poll: 5
+  changed_when: "'Firmware already' not in (firmware_log.stdout | default(''))"
+  notify: ipmi reset
+  when: not ansible_check_mode
+
+- name: Show firmware output
+  ansible.builtin.debug:
+    msg: "{{ firmware_log.stdout_lines | default([]) }}"
+  when: not ansible_check_mode

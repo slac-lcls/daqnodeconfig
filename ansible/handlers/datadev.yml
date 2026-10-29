@@ -1,0 +1,15 @@
+# Shared handlers. Handlers run once at the end of the play, in this order, whatever order they
+# were notified in: the reset is always last.
+- name: reload datadev
+  ansible.builtin.shell: |
+    rmmod datadev 2>/dev/null || true
+    systemctl daemon-reload
+    systemctl start datadev.service
+    systemctl enable datadev.service
+  when: datadev_service_stat.stat.exists | default(true)
+
+- name: apply sysctl
+  ansible.builtin.command: sysctl -p {{ sysctl_dest }}
+
+- name: ipmi reset
+  ansible.builtin.command: ipmitool power reset

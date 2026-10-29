@@ -19,12 +19,7 @@
       regexp: '^(ExecStart=.*cfgRxCount=)\d+'
       replace: '\g<1>65532'
     when: current_rxcount.stdout | int > 65532
-    notify: Reinstall
+    notify: reload datadev
 
   handlers:
-  - name: Reinstall
-    ansible.builtin.shell: |
-      rmmod datadev 2>/dev/null || true
-      systemctl daemon-reload
-      systemctl start datadev.service
-      systemctl enable datadev.service
+    - ansible.builtin.import_tasks: handlers/datadev.yml

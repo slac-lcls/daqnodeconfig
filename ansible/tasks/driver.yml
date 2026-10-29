@@ -1,0 +1,15 @@
+- name: Does the driver file exist on the controller?
+  ansible.builtin.stat:
+    path: "{{ driver_src }}"
+  register: driver_src_stat
+  delegate_to: localhost
+  become: false
+  failed_when: not driver_src_stat.stat.exists
+
+- name: Install driver {{ driver }}
+  ansible.builtin.copy:
+    src: "{{ driver_src }}"
+    dest: "{{ driver_dest }}"
+    mode: a+x
+    backup: true
+  notify: reload datadev

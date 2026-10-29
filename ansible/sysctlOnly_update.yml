@@ -1,35 +1,21 @@
-# This playbook updates the sysctl.conf on the nodes. 
-# 
+# This playbook updates the sysctl.conf on the nodes.
+#
 # how to run the script
 # ansible-playbook sysctlOnly_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
 
 # RM 2026-07-28: Initial version
-
+# 2026-10-28: rebuilt from the shared steps in tasks/ (Claude)
 ---
 - hosts: "{{ host }}"
   gather_facts: false
   become: true
 
-  vars: 
-    path: "/sdf/home/p/psrel/ansible_files"
-                                                         
+  vars:
+    required_vars: [host]
+
   tasks:
-    - name: initial message
-      ansible.builtin.debug:
-        msg: "Installing new sysctl.conf on {{ inventory_hostname }}"
-                                                          
-    - name: load files
-      become: true
-      ansible.builtin.copy:                               
-        src: '{{ path }}/sysctl.conf'
-        dest: '/etc/sysctl.d/90-daq.conf'
-        mode: a+r
-        backup: true
-      notify: install drivers
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/sysctl.yml
 
   handlers:
-   - name: install drivers
-     
-     ansible.builtin.shell: |
-       sysctl -p /etc/sysctl.d/90-daq.conf    
-                                               
+    - ansible.builtin.import_tasks: handlers/datadev.yml

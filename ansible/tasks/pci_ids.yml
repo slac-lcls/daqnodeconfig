@@ -1,0 +1,6 @@
+- name: Install pci.ids
+  ansible.builtin.copy:
+    src: "{{ pci_ids_src }}"
+    dest: "{{ pci_ids_dest }}"
+    mode: a+r
+    backup: true

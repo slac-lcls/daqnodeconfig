@@ -1,0 +1,7 @@
+# Records whether datadev.service is installed on the node. The reload handler is skipped when it
+# is not. Set require_datadev_service: true to fail instead.
+- name: Is datadev.service present on the node?
+  ansible.builtin.stat:
+    path: "{{ datadev_service }}"
+  register: datadev_service_stat
+  failed_when: (require_datadev_service | default(false)) and not datadev_service_stat.stat.exists

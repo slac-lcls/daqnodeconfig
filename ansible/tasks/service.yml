@@ -1,0 +1,15 @@
+- name: Does the service file exist on the controller?
+  ansible.builtin.stat:
+    path: "{{ service_src }}"
+  register: service_src_stat
+  delegate_to: localhost
+  become: false
+  failed_when: not service_src_stat.stat.exists
+
+- name: Install {{ service }}.service as datadev.service
+  ansible.builtin.copy:
+    src: "{{ service_src }}"
+    dest: "{{ datadev_service }}"
+    mode: a+r
+    backup: true
+  notify: reload datadev

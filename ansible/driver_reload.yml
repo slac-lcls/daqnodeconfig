@@ -1,43 +1,27 @@
 # This playbook reloads the datadev driver on the nodes. It should be run if datadev.service is already installed,
 # otherwise run files_update.yml instead.
-# The playbook checks for the presence of the service file and only proceeds with the driver reload if it exists.
-
+#
 # how to run the script
 # ansible-playbook driver_reload.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp'
 
 # RM 2026-03-11: Initial version
-
+# 2026-10-28: uses the shared steps in tasks/ (Claude)
 ---
 - hosts: "{{ host }}"
   gather_facts: false
   become: true
 
-  pre_tasks:
-    - name: Are the required extra variables defined?
-      ansible.builtin.assert:
-        that:
-          - host is defined and host | length > 0
-        fail_msg: >
-          A 'host' must be supplied as an
-          extra variable (-e "host=...").
-
-    - name: Is service file present on the node?                        
-      ansible.builtin.stat:
-        path: /etc/systemd/system/datadev.service
-      register: service_file_status
-      failed_when: not service_file_status.stat.exists
+  vars:
+    required_vars: [host]
+    require_datadev_service: true
 
   tasks:
-    - name: Initial message
-      ansible.builtin.debug:
-        msg: "Reloading driver on {{ inventory_hostname }}"              
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/service_present.yml
 
-    - name: Reload driver                     
-      ansible.builtin.shell: |                        
-        #        rmmod datadev 2>/dev/null || true             
-        systemctl daemon-reload                       
-        systemctl start datadev.service               
+    # No rmmod here: datadev.service's ExecStartPre unloads the old module itself
+    - name: Reload driver
+      ansible.builtin.shell: |
+        systemctl daemon-reload
+        systemctl start datadev.service
         systemctl enable datadev.service
-      when: service_file_status.stat.exists           
-                                                      
-                                                      

@@ -1,0 +1,9 @@
+# Checks that every variable in required_vars was given with -e.
+# Set required_vars in the playbook, e.g. required_vars: [host, driver]
+- name: Are the required extra variables defined?
+  ansible.builtin.assert:
+    that:
+      - lookup('vars', item, default='') | string | length > 0
+    fail_msg: "'{{ item }}' must be supplied as an extra variable (-e {{ item }}=...)"
+    quiet: true
+  loop: "{{ required_vars }}"

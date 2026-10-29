@@ -53,7 +53,7 @@
         regexp: '^(ExecStart=.*{{ var }}=)\d+'
         replace: '\g<1>{{ value }}'
       when: var_check.rc == 0
-      notify: Reinstall
+      notify: reload datadev
 
     - name: Append var to the ExecStart line if not present
       ansible.builtin.replace:
@@ -61,12 +61,7 @@
         regexp: '^(ExecStart=.*\S)\s*$'
         replace: '\g<1> {{ var }}={{ value }}'
       when: var_check.rc != 0
-      notify: Reinstall
+      notify: reload datadev
 
   handlers:
-    - name: Reinstall
-      ansible.builtin.shell: |
-        rmmod datadev 2>/dev/null || true
-        systemctl daemon-reload
-        systemctl start datadev.service
-        systemctl enable datadev.service
+    - ansible.builtin.import_tasks: handlers/datadev.yml
