@@ -1,70 +1,28 @@
-# This playbook updates the driver on the nodes. It should be run if datadev.service is already uploaded on the node. 
-# If the service file is not present, it will not update the driver and will instead run files_update.yml to update the service file first.
-# otherwise run files_update.yml instead.
-# The playbook checks for the presence of the service file and only proceeds with the driver update if service file exists.
-
+# This playbook updates the driver on the nodes. The driver is reloaded only if datadev.service is
+# already installed on the node; otherwise run files_update.yml to install the service file too.
+#
 # how to run the script
-# ansible-playbook driver_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0' -e repo='rocky' -e version='9.6' 
+# ansible-playbook driver_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
+# optional: -e repo='rocky' -e version='9.6' to pick a driver build for another distro release
 
 # RM 2026-03-11: Initial version
 # RM 2026-04-03: Claude proofed
+# 2026-10-28: rebuilt from the shared steps in tasks/ (Claude)
 ---
 - hosts: "{{ host }}"
   gather_facts: true
-  gather_subset:    # for faster loading of facts, only gather minimal facts and not all facts
+  gather_subset:  # for faster loading of facts, only gather minimal facts and not all facts
   - '!all'
   - 'min'
   become: true
-  
 
   vars:
-    
-    repo: "{{ ansible_distribution | lower }}"
-    version: "{{ ansible_distribution_version }}"
-    src: '/cds/home/p/psrel/ansible_files/datadev/datadev.ko_{{ driver }}_{{ repo }}_{{ version }}'
-    dest: '/usr/local/sbin/datadev.ko'
-    mode: '0755'
-  
-  pre_tasks:
-    - name: Are the required extra variables defined?
-      ansible.builtin.assert:
-        that:
-          - host is defined and host | length > 0
-          - driver is defined and driver | length > 0
-        fail_msg: >
-          'host','driver' must be supplied as
-          extra variables (-e "host=... driver=...").
+    required_vars: [host, driver]
 
-    - name: Does the driver file exist on the controller?
-      ansible.builtin.stat:
-        path: "{{ src }}"
-      register: src_stat
-      delegate_to: localhost
-      failed_when: not src_stat.stat.exists
-
-    - name: Does the service file exist on the node?                        
-      ansible.builtin.stat:
-        path: /etc/systemd/system/datadev.service
-      register: service_file_status
-      
   tasks:
-    - name: Initial message
-      ansible.builtin.debug:
-        msg: "Starting driver update for {{ inventory_hostname }} with driver {{ driver }}"
-
-    - name: load files
-      ansible.builtin.copy:                           
-        src: "{{ src }}"
-        dest: "{{ dest }}"
-        mode: "{{ mode }}"
-        backup: true
-        notify: install drivers
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/service_present.yml
+    - ansible.builtin.import_tasks: tasks/driver.yml
 
   handlers:
-    - name: install drivers                                                  
-      ansible.builtin.shell: |
-        rmmod datadev 2>/dev/null || true
-        systemctl daemon-reload
-        systemctl start datadev.service
-        systemctl enable datadev.service
-      when : service_file_status.stat.exists
+    - ansible.builtin.import_tasks: handlers/datadev.yml

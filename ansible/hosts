@@ -125,7 +125,8 @@ drp-neh-cmp002
 #drp-neh-cmp012 ask Mona before modifying
 
 [TMO_hsd_cards]
-daq-tmo-hsd-01
+#daq-tmo-hsd-01
+daq-tmo-hsd-02
 
 [RIX_hsd_cards]
 daq-rix-hsd-01

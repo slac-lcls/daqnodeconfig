@@ -10,20 +10,6 @@ names or host patterns) unless noted otherwise.
 
 ## Playbooks
 
-### `cfgRxCount_update.yaml`
-Updates the `cfgRxCount` parameter in the `ExecStart` line of `/etc/systemd/system/datadev.service`
-to a user-supplied value. After the replacement the driver is reloaded (`rmmod` → `daemon-reload` →
-`start` → `enable`).  
-**Requires:** `host`, `cfgRxCount`  
-**Pre-condition:** `datadev.service` must already be installed on the node (run `files_update.yml`
-first if not).
-
-```bash
-ansible-playbook cfgRxCount_update.yaml -K -e host='TMO_hsd_drp RIX_hsd_drp' -e cfgRxCount='6400'
-```
-
----
-
 ### `distro_info.yml`
 Queries and prints the Linux distribution name and version for each target host using Ansible
 gather_facts. Useful for inventory auditing before deploying distribution-specific driver binaries.  
@@ -164,20 +150,20 @@ ansible-playbook security_limits_modifier.yml -K -e host='TMO_hsd_drp'
 
 ---
 
-### `servicefile_reinstall.yaml`
+### `servicefile_reinstall.yml`
 Restores `datadev.service` on each node from a per-hostname backup stored on the controller at
 `/sdf/home/p/psrel/ansible_files/datadev_service_files/datadev.service.<hostname>`. Skips nodes
 for which no backup exists. Targets the `rocky9` inventory group (no `host` variable needed).
 
 ```bash
-ansible-playbook servicefile_reinstall.yaml -K
+ansible-playbook servicefile_reinstall.yml -K
 ```
 
 ---
 
 ### `servicefile_single_update.yml`
 Generic single-parameter updater for `datadev.service`. Replaces any named numeric parameter in
-the `ExecStart` line with a new value. More flexible alternative to `cfgRxCount_update.yaml`.
+the `ExecStart` line with a new value.
 Triggers a driver reload after the change.  
 **Requires:** `host`, `var` (parameter name, e.g. `cfgRxCount`), `value` (new numeric value)  
 **Pre-condition:** `datadev.service` must already be installed.
@@ -224,9 +210,8 @@ ansible-playbook sysctlOnly_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp'
 | Update driver binary only | `driver_update.yml` |
 | Reload driver after manual edit | `driver_reload.yml` |
 | Change a single service parameter | `servicefile_single_update.yml` |
-| Change `cfgRxCount` specifically | `cfgRxCount_update.yaml` |
 | Cap `cfgRxCount` at safe limit | `limit_cfgRxCount.yml` |
-| Restore service file from backup | `servicefile_reinstall.yaml` |
+| Restore service file from backup | `servicefile_reinstall.yml` |
 | Update sysctl settings only | `sysctlOnly_update.yml` |
 | Update PCI device database | `pci_ids_load.yml` |
 | Set PAM memory limits | `security_limits_modifier.yml` |

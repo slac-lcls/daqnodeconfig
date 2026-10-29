@@ -15,7 +15,7 @@
       ansible.builtin.assert:
         that:
           - host is defined and host | length > 0
-          - var is defined and value | length > 0
+          - var is defined and var | length > 0
           - value is defined and value | length > 0
         fail_msg: >
           'host','var','value' must be supplied as
@@ -30,6 +30,7 @@
     - name: Check whether the ExecStart line exists
       ansible.builtin.command: grep -E '^ExecStart=' /etc/systemd/system/datadev.service
       register: execstart_check
+      check_mode: false
       changed_when: false
       failed_when: execstart_check.rc > 1
 
@@ -39,8 +40,9 @@
       when: execstart_check.rc != 0
 
     - name: Check whether var is already present on the ExecStart line
-      ansible.builtin.command: grep -E '^ExecStart=.*{{ var }}=\d+' /etc/systemd/system/datadev.service
+      ansible.builtin.command: grep -E '^ExecStart=.*{{ var }}=[0-9]+' /etc/systemd/system/datadev.service
       register: var_check
+      check_mode: false
       changed_when: false
       failed_when: var_check.rc > 1
 
@@ -51,7 +53,7 @@
         regexp: '^(ExecStart=.*{{ var }}=)\d+'
         replace: '\g<1>{{ value }}'
       when: var_check.rc == 0
-      notify: Reinstall
+      notify: reload datadev
 
     - name: Append var to the ExecStart line if not present
       ansible.builtin.replace:
@@ -59,12 +61,7 @@
         regexp: '^(ExecStart=.*\S)\s*$'
         replace: '\g<1> {{ var }}={{ value }}'
       when: var_check.rc != 0
-      notify: Reinstall
+      notify: reload datadev
 
   handlers:
-    - name: Reinstall
-      ansible.builtin.shell: |
-        rmmod datadev 2>/dev/null || true
-        systemctl daemon-reload
-        systemctl start datadev.service
-        systemctl enable datadev.service
+    - ansible.builtin.import_tasks: handlers/datadev.yml

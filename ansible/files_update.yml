@@ -1,83 +1,29 @@
-# This playbook updates the driver and service files on the nodes. 
-# 
+# This playbook installs the driver, the service file and sysctl.conf on the nodes, then reloads the driver.
+# = driver_update.yml + service file + sysctl
+#
 # how to run the script
 # ansible-playbook files_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd'
 
 # RM 2026-03-11: Initial version
 # RM 2026-03-26: sysctl.conf is moved into sysctl.d and restarted
 # RM 2026-04-03: claude proofed
+# 2026-10-28: rebuilt from the shared steps in tasks/ (Claude)
 ---
 - hosts: "{{ host }}"
   gather_facts: true
   gather_subset:  # for faster loading of facts, only gather minimal facts and not all facts
-  - '!all'    
-  -'min'
+  - '!all'
+  - 'min'
   become: true
-  
 
-  vars: 
-    path: "/cds/home/p/psrel/ansible_files"
-    linux_repo: "{{ ansible_distribution | lower }}"
-    linux_version: "{{ ansible_distribution_version }}"
-
-    files_name: 
-      - {src: '{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}', dest: '/usr/local/sbin/datadev.ko',         mode: a+x}
-      - {src: '{{ path }}/services/{{ service }}.service',                                        dest: '/etc/systemd/system/datadev.service', mode: a+r}
-      - {src: '{{ path }}/sysctl.conf',                                                           dest: '/etc/sysctl.d/90-daq.conf',           mode: a+r}
-      - {src: '{{ path }}/pci.ids',                                                               dest: '/usr/share/hwdata/pci.ids',           mode: a+r}
-  pre_tasks:
-    - name: Assert required extra variables are defined
-      ansible.builtin.assert:
-        that:
-          - host is defined and host | length > 0
-          - driver is defined and driver | length > 0
-          - service is defined and service | length > 0
-        fail_msg: >
-          All 'host', 'driver', and 'service' must be supplied as
-          extra variables (-e "host=... driver=... service=...").
-
-    - name: Check that the source driver file exists on the controller
-      ansible.builtin.stat:
-        path: "{{ path }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}"
-      register: src_stat
-      failed_when: not src_stat.stat.exists
-
-    - name: Check that the source service file exists on the controller
-      ansible.builtin.stat:
-        path: "{{ path }}/services/{{ service }}.service"
-      register: service_stat
-      failed_when: not service_stat.stat.exists
+  vars:
+    required_vars: [host, driver, service]
 
   tasks:
-    - name: initial message
-      ansible.builtin.debug:
-        msg: "Installing new files {{ driver }}, {{ service }}, and sysctl.conf on {{ inventory_hostname }}"
-                                                          
-    - name: load files
-      become: true
-      ansible.builtin.copy:                               
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        mode: "{{ item.mode }}"
-        backup: true
-      with_items: "{{ files_name }}"
-      register: artifacts_copy_status
-      notify: install drivers
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/driver.yml
+    - ansible.builtin.import_tasks: tasks/service.yml
+    - ansible.builtin.import_tasks: tasks/sysctl.yml
 
   handlers:
-   - name: install drivers
-      ansible.builtin.debug:
-          msg: "Installing drivers on {{ inventory_hostname }}"
-        ansible.builtin.shell: |
-          rmmod datadev 2>/dev/null || true
-          systemctl daemon-reload
-          systemctl start datadev.service
-          systemctl enable datadev.service
-          sysctl -p /etc/sysctl.d/90-daq.conf
-     ansible.builtin.shell: |
-       rmmod datadev 2>/dev/null || true
-       systemctl daemon-reload
-       systemctl start datadev.service
-       systemctl enable datadev.service
-       sysctl -p /etc/sysctl.d/90-daq.conf    
-                                               
+    - ansible.builtin.import_tasks: handlers/datadev.yml

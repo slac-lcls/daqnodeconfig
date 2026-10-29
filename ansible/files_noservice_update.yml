@@ -1,0 +1,31 @@
+# This playbook updates the driver, sysctl.conf and pci.ids on the nodes, leaving datadev.service untouched.
+# Use it on nodes that already have the correct datadev.service, otherwise run files_update.yml instead.
+# = driver_update.yml + sysctl + pci.ids
+#
+# how to run the script
+# ansible-playbook files_noservice_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
+
+# RM 2026-03-11: Initial version
+# RM 2026-03-26: sysctl.conf is moved into sysctl.d and restarted
+# RM 2026-04-03: claude proofed
+# 2026-10-28: rebuilt from the shared steps in tasks/ (Claude)
+---
+- hosts: "{{ host }}"
+  gather_facts: true
+  gather_subset:  # for faster loading of facts, only gather minimal facts and not all facts
+  - '!all'
+  - 'min'
+  become: true
+
+  vars:
+    required_vars: [host, driver]
+
+  tasks:
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/service_present.yml
+    - ansible.builtin.import_tasks: tasks/driver.yml
+    - ansible.builtin.import_tasks: tasks/sysctl.yml
+    - ansible.builtin.import_tasks: tasks/pci_ids.yml
+
+  handlers:
+    - ansible.builtin.import_tasks: handlers/datadev.yml

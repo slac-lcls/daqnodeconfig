@@ -1,85 +1,23 @@
-# This playbook updates the firmware on the nodes. It should be run if datadev.service is already installed
-# otherwise run files_update.yml before.
-
+# This playbook updates the firmware on the nodes. It should be run if datadev.service is already installed,
+# otherwise run files_update.yml before. If new firmware was written the node is power-cycled.
+#
 # how to run the script
 # ansible-playbook firmware_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e firmware='hsd'
 
 # RM 2026-03-11: Initial version
 # RM 2026-04-03: Claude proofed
+# 2026-10-28: rebuilt from the shared steps in tasks/ (Claude)
 ---
 - hosts: "{{ host }}"
-  gather_facts: false  # faster execution, we only need the distribution facts in the pre-tasks
-  become: true         # become root
+  gather_facts: false
+  become: true
+
   vars:
-    firmwares:
-      hsd:          drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54
-      timing:       drp/DrpTDet-0x05040300-20250811085743-weaver-846de54
-      timingC1100:  drp/DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54
-      wave:         drp/XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff
-      camera:       drp/Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a
-      jungfrau:     drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
-      epix:         drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
-
-    filepath:      "/cds/home/p/psrel/mcs/"
-    setup_source:  "source /cds/home/x/xppopr/daq/scripts/setup_env.sh"
-    cd_cameralink: "cd /cds/home/p/psrel/git/pgp-pcie-apps/software/"
-     
-  pre_tasks:                                        
-    - name: Assert required extra variables are defined
-      ansible.builtin.assert:
-        that:
-          - host is defined and host | length > 0   
-          - firmware is defined and firmware | length > 0
-        fail_msg: >
-          Both 'host' and 'firmware' must be supplied as
-          extra variables (-e "host=... firmware=...").
-
-    - name: Using user defined firmware name
-      ansible.builtin.set_fact:
-        my_firm: "drp/{{ firmware }}"
-      when: firmware not in firmwares               
-
-    - name: Using firmware from list
-      ansible.builtin.set_fact:
-        my_firm: "{{ firmwares[firmware] }}"
-      when: firmware in firmwares                   
-
-    - name: Check if datadev_1 exists
-      stat:
-        path: /proc/datadev_1
-      register: stat_result
-
-    - name: test datadev_1
-      set_fact:
-        datadev: datadev_1
-      when: stat_result.stat.exists
-
-    - name: test datadev_0
-      set_fact:
-        datadev: datadev_0
-      when: not stat_result.stat.exists
+    required_vars: [host, firmware]
 
   tasks:
-    - name: Initial message
-      ansible.builtin.debug:
-        msg: "Installing new firmware: python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ my_firm }} --rescan False"
-
-    - name: update firmware              
-      become: true
-      ansible.builtin.shell:
-        cmd: '{{ setup_source }} ; {{ cd_cameralink }} ; python ./scripts/updatePcieFpga.py --dev /dev/{{ datadev }} --filename {{ filepath }}{{ my_firm }} --rescan False'
-      register: firmware_log
-      async: 300
-      poll: 5
-      changed_when: "'Firmware already' not in firmware_log.stdout_lines"
-      notify: ipmi_reboot
-
-    - name: Show build script output
-      ansible.builtin.debug:
-        msg: "{{ firmware_log.stdout_lines }}"
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+    - ansible.builtin.import_tasks: tasks/firmware.yml
 
   handlers:
-    - name: ipmi_reboot
-      become: true
-      ansible.builtin.shell: |             
-        ipmitool power reset
+    - ansible.builtin.import_tasks: handlers/datadev.yml

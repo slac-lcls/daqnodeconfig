@@ -1,0 +1,7 @@
+- name: Install sysctl.conf
+  ansible.builtin.copy:
+    src: "{{ sysctl_src }}"
+    dest: "{{ sysctl_dest }}"
+    mode: a+r
+    backup: true
+  notify: apply sysctl

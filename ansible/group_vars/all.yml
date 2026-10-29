@@ -1,0 +1,32 @@
+# Shared settings for all playbooks. Values given with -e on the command line override these.
+
+ansible_files: /sdf/home/p/psrel/ansible_files
+
+# Driver builds are named datadev.ko_<driver>_<distro>_<version>, e.g. datadev.ko_6.9.0_rocky_9.6
+# -e repo=... / -e version=... can be used to pick a build for another distro release
+linux_repo: "{{ repo if repo is defined else ansible_distribution | lower }}"
+linux_version: "{{ version if version is defined else ansible_distribution_version }}"
+driver_src: "{{ ansible_files }}/datadev/datadev.ko_{{ driver }}_{{ linux_repo }}_{{ linux_version }}"
+driver_dest: /usr/local/sbin/datadev.ko
+
+service_src: "{{ ansible_files }}/services/{{ service }}.service"
+datadev_service: /etc/systemd/system/datadev.service
+
+sysctl_src: "{{ ansible_files }}/sysctl.conf"
+sysctl_dest: /etc/sysctl.d/90-daq.conf
+
+pci_ids_src: "{{ ansible_files }}/pci.ids"
+pci_ids_dest: /usr/share/hwdata/pci.ids
+
+# Firmware: -e firmware=<alias> picks from this list, anything else is used as drp/<firmware>
+firmware_dir: /sdf/home/p/psrel/mcs
+firmware_setup: /sdf/home/x/xppopr/daq/scripts/setup_env.sh
+firmware_sw_dir: /sdf/home/p/psrel/git/pgp-pcie-apps/software
+firmwares:
+  hsd:         drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54
+  timing:      drp/DrpTDet-0x05040300-20250811085743-weaver-846de54
+  timingC1100: drp/DrpTDetGpuC1100-0x05040300-20250811100751-weaver-846de54
+  wave:        drp/XilinxKcu1500Pgp4_6Gbps-0x02050000-20240215192118-ruckman-3e991ff
+  camera:      drp/Lcls2XilinxKcu1500Pgp2b-0x03100000-20250114180154-ruckman-524f66a
+  jungfrau:    drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731
+  epix:        drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7
