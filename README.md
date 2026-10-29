@@ -38,12 +38,12 @@ Copies a pre-built `datadev.ko` kernel module from the controller to `/usr/local
 on each target node. The correct binary is selected automatically from the controller's file store
 based on the node's detected OS distribution and version. Triggers a driver reload if
 `datadev.service` is already present.  
-**Requires:** `host`, `driver` (version string, e.g. `6.9.0`)  
+**Requires:** `host`, `driver` (version string, e.g. `7.4.0`)  
 **Pre-condition:** The matching `datadev.ko_<driver>_<distro>_<version>` file must exist on the
 controller under `/sdf/home/p/psrel/ansible_files/datadev/`.
 
 ```bash
-ansible-playbook driver_update.yml -K -e host='TMO_hsd_drp' -e driver='6.9.0'
+ansible-playbook driver_update.yml -K -e host='TMO_hsd_drp' -e driver='7.4.0'
 ```
 
 ---
@@ -59,7 +59,7 @@ the sysctl settings.
 **Requires:** `host`, `driver`, `service` (service template name, e.g. `kcu_hsd`)
 
 ```bash
-ansible-playbook files_update.yml -K -e host='TMO_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd'
+ansible-playbook files_update.yml -K -e host='TMO_hsd_drp' -e driver='7.4.0' -e service='kcu_hsd'
 ```
 
 ---
@@ -132,7 +132,7 @@ playbooks.
 **Requires:** `host`, `driver` (git tag / branch to check out before building)
 
 ```bash
-ansible-playbook rebuild_driver.yml -K -e host='TMO_hsd_drp RIX_hsd_drp' -e driver='6.9.0'
+ansible-playbook rebuild_driver.yml -K -e host='TMO_hsd_drp RIX_hsd_drp' -e driver='7.4.0'
 ```
 
 ---
@@ -183,7 +183,7 @@ an IPMI power reset. Contains the same firmware lookup table as `firmware_update
 
 ```bash
 ansible-playbook srcf_manual.yml -K \
-  -e host='TMO_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd' -e firmware='hsd'
+  -e host='TMO_hsd_drp' -e driver='7.4.0' -e service='kcu_hsd' -e firmware='hsd'
 ```
 
 ---

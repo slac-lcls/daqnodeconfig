@@ -27,7 +27,7 @@
   import_playbook: srcf_manual.yml
   vars:
     host: TMO_hsd_drp:RIX_hsd_drp:XPP_hsd_drp
-    driver: 6.9.0
+    driver: 7.4.0
     service: kcu_hsd
     firmware: hsd
   tags: hsd
@@ -37,7 +37,7 @@
   import_playbook: srcf_manual.yml
   vars:
     host: wave_drp:!XPP_wave_drp
-    driver: 6.9.0
+    driver: 7.4.0
     service: kcu_wave
     firmware: wave
   tags: wave
@@ -46,7 +46,7 @@
   import_playbook: srcf_manual.yml
   vars:
     host: TMO_camera_drp:RIX_camera_drp
-    driver: 6.9.0
+    driver: 7.4.0
     service: kcu
     firmware: camera
   tags: camera
@@ -55,7 +55,7 @@
   import_playbook: srcf_manual.yml
   vars:
     host: TMO_timing_drp:RIX_timing_drp
-    driver: 6.9.0
+    driver: 7.4.0
     service: tdetsim_low
     firmware: timing
   tags: timing
@@ -64,7 +64,7 @@
   import_playbook: srcf_manual.yml
   vars:
     host: TMO_hightiming_drp:RIX_hightiming_drp
-    driver: 6.9.0
+    driver: 7.4.0
     service: tdetsim_high
     firmware: timing
   tags: hightiming
@@ -73,7 +73,7 @@
   import_playbook: srcf_manual.yml
   vars:
     host: Jungfrau_drp
-    driver: 6.9.0
+    driver: 7.4.0
     service: kcu_jung
     firmware: jungfrau
   tags: jungfrau

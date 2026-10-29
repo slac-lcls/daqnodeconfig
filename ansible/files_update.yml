@@ -2,7 +2,7 @@
 # = driver_update.yml + service file + sysctl
 #
 # how to run the script
-# ansible-playbook files_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0' -e service='kcu_hsd'
+# ansible-playbook files_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='7.4.0' -e service='kcu_hsd'
 
 # RM 2026-03-11: Initial version
 # RM 2026-03-26: sysctl.conf is moved into sysctl.d and restarted

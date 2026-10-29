@@ -57,7 +57,7 @@ The most comprehensive single-playbook update. Copies all three configuration ar
 ```bash
 ansible-playbook srcf_manual.yml -K \
   -e host='TMO_hsd_drp RIX_hsd_drp' \
-  -e driver='6.9.0' \
+  -e driver='7.4.0' \
   -e service='kcu_hsd' \
   -e firmware='hsd'
 ```
@@ -101,7 +101,7 @@ ansible-playbook master_update.yml -K --tags hightiming
 ansible-playbook master_update.yml -K --tags jungfrau
 ```
 
-**Device type definitions (all use driver 6.9.0).** Service files match what is installed on the nodes.
+**Device type definitions (all use driver 7.4.0).** Service files match what is installed on the nodes.
 
 | Tag | Host groups | Service | Firmware |
 |---|---|---|---|
@@ -124,7 +124,7 @@ Use this when `datadev.service` is **not yet installed** on a node. Copies all t
 ```bash
 ansible-playbook files_update.yml -K \
   -e host='TMO_hsd_drp' \
-  -e driver='6.9.0' \
+  -e driver='7.4.0' \
   -e service='kcu_hsd'
 ```
 
@@ -145,7 +145,7 @@ Use this when `datadev.service` **is already installed** and only the kernel mod
 ```bash
 ansible-playbook driver_update.yml -K \
   -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' \
-  -e driver='6.9.0'
+  -e driver='7.4.0'
 ```
 
 Copies the version/distro-specific `.ko` to `/usr/local/sbin/datadev.ko`. Aborts with a clear message if `datadev.service` is not found (redirect to `files_update.yml`). On success: unloads old module, reloads systemd, starts/enables service.
@@ -174,7 +174,7 @@ Checks whether a pre-built driver for the node's distro/version already exists i
 ```bash
 ansible-playbook rebuild_driver.yml -K \
   -e host='TMO_hsd_drp' \
-  -e driver='6.9.0'
+  -e driver='7.4.0'
 ```
 
 Key paths:
@@ -339,7 +339,7 @@ ansible-playbook distro_info.yml -e host='<new_host>'
 
 # 2. Install driver + service + sysctl
 ansible-playbook files_update.yml -K \
-  -e host='<new_host>' -e driver='6.9.0' -e service='kcu_hsd'
+  -e host='<new_host>' -e driver='7.4.0' -e service='kcu_hsd'
 
 # 3. Flash firmware
 ansible-playbook firmware_update.yml -K \
@@ -350,13 +350,13 @@ ansible-playbook firmware_update.yml -K \
 ```bash
 ansible-playbook srcf_manual.yml -K \
   -e host='TMO_hsd_drp' \
-  -e driver='6.9.0' -e service='kcu_hsd' -e firmware='hsd'
+  -e driver='7.4.0' -e service='kcu_hsd' -e firmware='hsd'
 ```
 
 ### Driver-only update
 ```bash
 ansible-playbook driver_update.yml -K \
-  -e host='TMO_hsd_drp' -e driver='6.9.0'
+  -e host='TMO_hsd_drp' -e driver='7.4.0'
 ```
 
 ### Update all device types at once
@@ -440,9 +440,9 @@ Naming convention: `datadev.ko_<driver_version>_<distro>_<os_version>`
 | `datadev.ko_6.8.0_redhat_7.9` | 6.8.0 | RHEL 7.9 |
 | `datadev.ko_6.9.0_redhat_7.1` | 6.9.0 | RHEL 7.1 |
 | `datadev.ko_6.9.0_redhat_7.9` | 6.9.0 | RHEL 7.9 |
-| `datadev.ko_6.9.0_rocky_9.6` | 6.9.0 | Rocky 9.6 (current default) |
+| `datadev.ko_6.9.0_rocky_9.6` | 6.9.0 | Rocky 9.6 |
 | `datadev.ko_6.12.0_rocky_9.6` | 6.12.0 | Rocky 9.6 |
-| `datadev.ko_7.4.0_rocky_9.6` | 7.4.0 | Rocky 9.6 |
+| `datadev.ko_7.4.0_rocky_9.6` | 7.4.0 | Rocky 9.6 (current default, installed on the SRCF nodes) |
 | `datadev.ko_fee` | — | Legacy FEE build |
 | `datadev.ko_srcf` | — | Legacy SRCF build |
 | `tmp/` | — | Staging dir for `rebuild_driver.yml` output |

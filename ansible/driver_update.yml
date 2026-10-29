@@ -2,7 +2,7 @@
 # already installed on the node; otherwise run files_update.yml to install the service file too.
 #
 # how to run the script
-# ansible-playbook driver_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='6.9.0'
+# ansible-playbook driver_update.yml -K -e host='TMO_hsd_drp RIX_hsd_drp XPP_hsd_drp' -e driver='7.4.0'
 # optional: -e repo='rocky' -e version='9.6' to pick a driver build for another distro release
 
 # RM 2026-03-11: Initial version
