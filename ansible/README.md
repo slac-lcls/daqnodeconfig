@@ -88,29 +88,29 @@ A raw firmware path can also be passed; it will be prefixed with `drp/`.
 ---
 
 #### `master_update.yml` — Orchestration wrapper for all device types
-Defines per-device-type configuration (hosts, driver version, service name, firmware alias) and delegates to `srcf_manual.yml` using Ansible tags.
+Defines per-device-type configuration (hosts, driver version, service name, firmware alias) and imports `srcf_manual.yml` once per device type, selected by tag. Running without `--tags` is refused, because `srcf_manual.yml` flashes firmware and power-cycles nodes whose firmware changed.
 
 **Usage:** run with a tag to target one device type.
 
 ```bash
-ansible-playbook master_update.yml --tags hsd
-ansible-playbook master_update.yml --tags wave
-ansible-playbook master_update.yml --tags camera
-ansible-playbook master_update.yml --tags timing
-ansible-playbook master_update.yml --tags hightiming
-ansible-playbook master_update.yml --tags jungfrau
+ansible-playbook master_update.yml -K --tags hsd
+ansible-playbook master_update.yml -K --tags wave
+ansible-playbook master_update.yml -K --tags camera
+ansible-playbook master_update.yml -K --tags timing
+ansible-playbook master_update.yml -K --tags hightiming
+ansible-playbook master_update.yml -K --tags jungfrau
 ```
 
-**Device type definitions (all use driver 6.9.0):**
+**Device type definitions (all use driver 6.9.0).** Service files match what is installed on the nodes.
 
 | Tag | Host groups | Service | Firmware |
 |---|---|---|---|
-| `hsd` | TMO/RIX/XPP_hsd_drp | `kcu_hsd.service` | `hsd` |
-| `wave` | wave_drp, XPP_wave_drp | `kcu_wave.service` | `wave` |
-| `camera` | TMO/RIX/XPP_camera_drp | `kcu_camera.service` | `camera` |
-| `timing` | TMO/RIX/XPP_timing_drp | `tdetsim_high.service` | `timing` |
-| `hightiming` | TMO/RIX/XPP_hightiming_drp | `tdetsim.service` | `timing` |
-| `jungfrau` | TMO/RIX/XPP_jungfrau_drp | `kcu_jung.service` | `jungfrau` |
+| `hsd` | TMO/RIX/XPP_hsd_drp | `kcu_hsd` | `hsd` |
+| `wave` | wave_drp except XPP_wave_drp (cmp049 runs kcu_xpm settings) | `kcu_wave` | `wave` |
+| `camera` | TMO/RIX_camera_drp | `kcu` | `camera` |
+| `timing` | TMO/RIX_timing_drp | `tdetsim_low` | `timing` |
+| `hightiming` | TMO/RIX_hightiming_drp | `tdetsim_high` | `timing` |
+| `jungfrau` | Jungfrau_drp | `kcu_jung` | `jungfrau` |
 
 ---
 
@@ -251,21 +251,6 @@ Uses a regex replace: `^(ExecStart=.*<var>=)\d+` → `\1<value>`. Aborts if `dat
 
 ### `cfgRxCount` Playbooks
 
-#### `cfgRxCount_update.yaml` — Set cfgRxCount to a specific value
-Sets the `cfgRxCount` parameter in the `ExecStart` line of `datadev.service` to a given value and reinstalls.
-
-**Required variables:** `host`, `cfgRxCount`
-
-```bash
-ansible-playbook cfgRxCount_update.yaml -K \
-  -e host='TMO_hsd_drp' \
-  -e cfgRxCount='6400'
-```
-
-This is functionally equivalent to `servicefile_single_update.yml` with `var=cfgRxCount`.
-
----
-
 #### `limit_cfgRxCount.yml` — Cap cfgRxCount at 65532
 Safety guard: reads the current `cfgRxCount` in `datadev.service` and resets it to `65532` if the value exceeds that limit. Reinstalls the driver service on change.
 
@@ -376,8 +361,8 @@ ansible-playbook driver_update.yml -K \
 
 ### Update all device types at once
 ```bash
-ansible-playbook master_update.yml --tags hsd
-ansible-playbook master_update.yml --tags camera
+ansible-playbook master_update.yml -K --tags hsd
+ansible-playbook master_update.yml -K --tags camera
 # etc.
 ```
 
