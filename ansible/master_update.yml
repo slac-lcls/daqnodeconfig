@@ -72,7 +72,7 @@
 - name: Update Jungfrau
   import_playbook: srcf_manual.yml
   vars:
-    host: Jungfrau_drp
+    host: Jungfrau_drp:Jungfrau_rocky9_drp
     driver: 7.4.0
     service: kcu_jung
     firmware: jungfrau

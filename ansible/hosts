@@ -15,6 +15,7 @@ drp-srcf-cmp028
 
 [timing_drp]
 drp-srcf-cmp001
+drp-srcf-cmp040
 drp-srcf-cmp014
 drp-srcf-cmp025
 drp-srcf-cmp029
@@ -54,6 +55,7 @@ drp-srcf-cmp021
 drp-srcf-cmp022
 drp-srcf-cmp023
 drp-srcf-cmp024
+drp-srcf-cmp045
 drp-srcf-cmp046
 drp-srcf-cmp048
 drp-srcf-cmp050
@@ -105,7 +107,6 @@ drp-srcf-cmp055
 
 [epix100_drp]
 drp-srcf-cmp031
-drp-srcf-cmp040
 drp-srcf-cmp044
 
 [Jungfrau_drp]
@@ -116,7 +117,7 @@ drp-srcf-cmp035
 drp-srcf-cmp038
 drp-srcf-cmp039
 
-[Jungfrau__rocky9_drp]
+[Jungfrau_rocky9_drp]
 drp-srcf-cmp056
 
 [tdetsim_fee_drp]
@@ -147,9 +148,6 @@ drp-ued-cmp004
 
 [ued_drp]
 drp-ued-cmp00[1:4]
-
-[xpp_drp]
-drp-srcf-mon008
 
 [rocky9]
 drp-srcf-cmp0[01:80]

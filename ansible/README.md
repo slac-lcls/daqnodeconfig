@@ -36,7 +36,8 @@ Key groups:
 | `RIX_timing_drp` | cmp010, 025, 029 | RIX timing DRP nodes |
 | `hightiming_drp` | cmp002, 003, 015, 016, 028, 030, 054 | High-rate timing DRP nodes |
 | `Jungfrau_drp` | cmp032–035, 038, 039 | Jungfrau detector DRP nodes |
-| `epix100_drp` | cmp031, 040, 044 | ePix100 detector DRP nodes |
+| `Jungfrau_rocky9_drp` | cmp056 | Jungfrau detector DRP node (also covered by `master_update --tags jungfrau`) |
+| `epix100_drp` | cmp031, 044 | ePix100 detector DRP nodes |
 | `rocky9` | cmp001–080, mon001–019 | All Rocky Linux 9 nodes |
 | `driver_drp` | cmp001–056 | Nodes requiring driver updates |
 
@@ -110,7 +111,7 @@ ansible-playbook master_update.yml -K --tags jungfrau
 | `camera` | TMO/RIX_camera_drp | `kcu` | `camera` |
 | `timing` | TMO/RIX_timing_drp | `tdetsim_low` | `timing` |
 | `hightiming` | TMO/RIX_hightiming_drp | `tdetsim_high` | `timing` |
-| `jungfrau` | Jungfrau_drp | `kcu_jung` | `jungfrau` |
+| `jungfrau` | Jungfrau_drp, Jungfrau_rocky9_drp | `kcu_jung` | `jungfrau` |
 
 ---
 
