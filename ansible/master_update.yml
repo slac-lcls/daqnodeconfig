@@ -6,7 +6,7 @@
 
 # how to run:
 # ansible-playbook master_update.yml -K --tags hsd
-# tags: hsd, wave, camera, timing, hightiming, jungfrau
+# tags: hsd, wave, camera, timing, hightiming, xpp_timing, jungfrau
 
 # RM 2026-03-11: Initial version
 # RM 2026-10-28: use import_playbook, fix service names and host groups, require a tag
@@ -21,7 +21,7 @@
         that:
           - "'all' not in ansible_run_tags"
         fail_msg: >
-          Select a device type with --tags (hsd, wave, camera, timing, hightiming, jungfrau).
+          Select a device type with --tags (hsd, wave, camera, timing, hightiming, xpp_timing, jungfrau).
 
 - name: Update hsd
   import_playbook: srcf_manual.yml
@@ -68,6 +68,16 @@
     service: tdetsim_high
     firmware: timing
   tags: hightiming
+
+# drp-srcf-cmp008 has a C1100 card and runs cfgRxCount=1020, so it has its own service file
+- name: Update XPP timing
+  import_playbook: srcf_manual.yml
+  vars:
+    host: XPP_timing_drp
+    driver: 7.4.0
+    service: tdetsim_c1100
+    firmware: timingC1100
+  tags: xpp_timing
 
 - name: Update Jungfrau
   import_playbook: srcf_manual.yml

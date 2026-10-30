@@ -36,6 +36,9 @@ drp-srcf-cmp054
 [hightiming_rocky9_drp]
 drp-srcf-cmp008
 
+[XPP_timing_drp]
+drp-srcf-cmp008
+
 [wave_drp]
 drp-srcf-cmp004
 drp-srcf-cmp051
