@@ -67,7 +67,7 @@ ansible-playbook srcf_manual.yml -K \
 **What it does:**
 1. Copies `datadev.ko_<driver>_<distro>_<version>` → `/usr/local/sbin/datadev.ko`
 2. Copies `<service>.service` → `/etc/systemd/system/datadev.service`
-3. Copies `sysctl.conf` → `/etc/sysctl.d/40-datadev-sysctl.conf`
+3. Copies `sysctl.conf` → `/etc/sysctl.d/90-daq.conf`
 4. Determines which `/proc/datadev_X` device to use (prefers `datadev_1`)
 5. Flashes FPGA firmware via `updatePcieFpga.py`
 6. On firmware change: triggers `ipmitool power reset`
@@ -271,6 +271,18 @@ ansible-playbook limit_cfgRxCount.yml -K \
 
 #### `sysctlOnly_update.yml` — Deploy sysctl configuration only
 Copies `sysctl.conf` from the controller to `/etc/sysctl.d/90-daq.conf` and applies it. Does not touch driver or service files.
+
+Every playbook that installs `sysctl.conf` then checks, read-only and also with `--check`, that the settings are actually in effect, and prints a **WARNING** listing any that are not:
+- another file read after `90-daq.conf`, usually the node's own `/etc/sysctl.conf`, sets a different value (e.g. `fs.mqueue.msg_max=64`);
+- the active value differs although `90-daq.conf` is installed, e.g. `tcp_congestion_control=htcp` on a node whose kernel has no `htcp` module.
+
+The check only warns; it does not change those files.
+
+Run it on its own, without changing anything:
+
+```bash
+ansible-playbook sysctlOnly_update.yml -K --check -e host='drp-srcf-*'
+```
 
 **Required variables:** `host`
 

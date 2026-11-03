@@ -4,4 +4,47 @@
     dest: "{{ sysctl_dest }}"
     mode: a+r
     backup: true
+  register: sysctl_copy
   notify: apply sysctl
+
+# Read-only check, also run with --check. Warns when a DAQ setting will not be in effect:
+#  - a file read after 90-daq.conf (e.g. the node's own /etc/sysctl.conf) sets another value, or
+#  - 90-daq.conf is already installed but the kernel runs another value, e.g. a congestion
+#    control the kernel does not have. Skipped while the file is being (re)installed, because
+#    the new values are only applied at the end of the play.
+- name: Check that the DAQ sysctl settings are in effect
+  ansible.builtin.shell: |
+    norm() { tr -s ' \t' '  ' | sed 's/^ //; s/ $//'; }
+    later=$(for d in /etc/sysctl.d /run/sysctl.d /usr/lib/sysctl.d; do
+              for f in "$d"/*.conf; do [ -e "$f" ] && echo "$(basename "$f") $f"; done
+            done | sort -s -k1,1 | awk -v me="{{ sysctl_dest | basename }}" '!seen[$1]++ && $1 > me {print $2}')
+    # /etc/sysctl.conf is read last; 99-sysctl.conf is usually a link to it, so list each file once
+    later=$(for f in $later /etc/sysctl.conf; do readlink -f "$f"; done | awk '!seen[$0]++')
+    while IFS='=' read -r key want; do
+      key=$(echo "$key" | norm); want=$(echo "$want" | norm)
+      [ -n "$key" ] || continue
+      for f in $later; do
+        [ -r "$f" ] || continue
+        v=$(grep -E "^[[:space:]]*${key//./\\.}[[:space:]]*=" "$f" | tail -1 | cut -d= -f2- | norm)
+        [ -n "$v" ] && [ "$v" != "$want" ] && echo "$key: $f sets $v, 90-daq.conf wants $want"
+      done
+      if [ "{{ not sysctl_copy.changed }}" = "True" ]; then
+        now=$(sysctl -n "$key" 2>/dev/null | norm)
+        [ "$now" != "$want" ] && echo "$key: active value is ${now:-unset}, 90-daq.conf wants $want"
+      fi
+    done <<'EOF'
+    {% for line in lookup('file', sysctl_src).splitlines() | map('trim') | reject('match', '^([#;].*)?$') %}
+    {{ line }}
+    {% endfor %}
+    EOF
+    exit 0
+  args:
+    executable: /bin/bash
+  register: sysctl_check
+  check_mode: false
+  changed_when: false
+
+- name: "WARNING: DAQ sysctl settings not in effect"
+  ansible.builtin.debug:
+    msg: "{{ sysctl_check.stdout_lines }}"
+  when: sysctl_check.stdout_lines | length > 0
