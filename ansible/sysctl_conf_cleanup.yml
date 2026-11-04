@@ -1,0 +1,62 @@
+# This playbook removes from /etc/sysctl.conf every line that sets a key also set in 90-daq.conf.
+# /etc/sysctl.conf is read after /etc/sysctl.d/90-daq.conf at boot, so an old copy of a DAQ setting
+# there (e.g. fs.mqueue.msg_max=64) silently wins over 90-daq.conf. Other lines, such as
+# kernel.core_pattern, are kept. A backup is made first.
+#
+# Nodes are only changed if their /etc/sysctl.d/90-daq.conf matches sysctl.conf on the controller;
+# run sysctlOnly_update.yml first on the others. Nothing is re-applied: add -e apply=true to run
+# 'sysctl --system' afterwards, otherwise the new values take effect at the next reboot.
+#
+# how to run the script
+# ansible-playbook sysctl_conf_cleanup.yml -K --check --diff -e host='drp-srcf-*'
+# ansible-playbook sysctl_conf_cleanup.yml -K -e host='drp-srcf-*'
+
+# 2026-11-04: Initial version (Claude)
+---
+- hosts: "{{ host }}"
+  gather_facts: false
+  become: true
+
+  vars:
+    required_vars: [host]
+    sysctl_conf: /etc/sysctl.conf
+    daq_keys: "{{ lookup('file', sysctl_src).splitlines() | map('trim') | reject('match', '^([#;].*)?$')
+                  | map('regex_replace', '^\\s*([^=\\s]+)\\s*=.*$', '\\1') | list }}"
+    # matches a whole line that sets one of daq_keys, including its newline
+    daq_keys_regexp: "(?m)^[ \t]*(?:{{ daq_keys | map('regex_escape') | join('|') }})[ \t]*=.*\n?"
+
+  tasks:
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+
+    - name: Read 90-daq.conf on the node
+      ansible.builtin.slurp:
+        path: "{{ sysctl_dest }}"
+      register: node_daq_conf
+      failed_when: false
+
+    - name: Is 90-daq.conf on the node the same as on the controller?
+      ansible.builtin.set_fact:
+        daq_conf_ok: "{{ node_daq_conf.content is defined and
+                         (node_daq_conf.content | b64decode) == lookup('file', sysctl_src) ~ '\n' }}"
+
+    - name: "Skip: 90-daq.conf missing or different, run sysctlOnly_update.yml first"
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}: {{ sysctl_dest }} is missing or differs from {{ sysctl_src }}; /etc/sysctl.conf left unchanged"
+      when: not daq_conf_ok
+
+    # One replace for all keys, so there is a single backup and the change shows as one diff
+    - name: Remove DAQ settings from /etc/sysctl.conf
+      ansible.builtin.replace:
+        path: "{{ sysctl_conf }}"
+        regexp: "{{ daq_keys_regexp }}"
+        replace: ''
+        backup: true
+      when: daq_conf_ok
+      register: sysctl_conf_cleanup
+
+    - name: Apply all sysctl files
+      ansible.builtin.command: sysctl --system
+      when:
+        - daq_conf_ok
+        - apply | default(false) | bool
+        - sysctl_conf_cleanup is changed
