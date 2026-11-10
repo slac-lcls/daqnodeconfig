@@ -15,7 +15,7 @@ Global Ansible configuration.
 |---|---|---|
 | `inventory` | `./hosts` | Points to the local hosts file |
 | `remote_tmp` | `/tmp/.ansible_$USER/tmp` | Temp dir on remote nodes |
-| `timeout` | 10 s | SSH connection timeout |
+| `timeout` | 30 s | SSH connection timeout (logins to the DRP nodes take ~18 s) |
 | `interpreter_python` | `/usr/bin/python3.9` | Python interpreter on nodes |
 | `ssh_args` | ControlMaster with 60 s persist | Connection multiplexing for speed |
 
@@ -69,7 +69,7 @@ ansible-playbook srcf_manual.yml -K \
 2. Copies `<service>.service` → `/etc/systemd/system/datadev.service`
 3. Copies `sysctl.conf` → `/etc/sysctl.d/90-daq.conf`
 4. Determines which `/proc/datadev_X` device to use (prefers `datadev_1`)
-5. Flashes FPGA firmware via `updatePcieFpga.py`
+5. Flashes FPGA firmware via `scripts/nodePcieFpga.py` (skipped if the card already runs the image)
 6. On firmware change: triggers `ipmitool power reset`
 7. On file change: unloads `datadev`, reloads systemd, starts/enables the service, applies sysctl
 
@@ -201,7 +201,15 @@ ansible-playbook firmware_update.yml -K \
   -e firmware='hsd'
 ```
 
-Uses the same firmware alias table as `srcf_manual.yml`. Runs async (up to 300 s). On firmware change: triggers `ipmitool power reset`.
+Uses the same firmware alias table as `srcf_manual.yml`. Runs async (up to 600 s, writing both PROMs takes about 4 min). On firmware change: triggers `ipmitool power reset`.
+
+The flashing is done by `../scripts/nodePcieFpga.py` (`firmware_script` in `group_vars/all.yml`), a non-interactive version of axi-pcie-core `updatePcieFpga`. It:
+- skips cards that already run the image (`Firmware already installed`), so a group can be given and only out-of-date nodes are flashed and reset;
+- refuses an image for another design (e.g. camera firmware on a timing card) unless run by hand with `--force True`;
+- checks the device, the PCIe link, the PROM type and the image files before writing, and exits non-zero on any error, so a failed update does not power-cycle the node.
+
+It loads the axipcie/surf python packages from `AXIPCIE_CORE_DIR`, or from `/sdf/home/p/psrel/git/pgp-pcie-apps/firmware/submodules/axi-pcie-core`.
+To check one card by hand (reads only, no root needed): `python scripts/nodePcieFpga.py --dev /dev/datadev_1 --filename /sdf/home/p/psrel/mcs/drp/<image> --check True`.
 
 ---
 
@@ -410,7 +418,7 @@ The update playbooks are built from shared steps, so each one is the previous on
 - `tasks/*.yml` — one step each. `preflight.yml` checks the variables listed in the playbook's `required_vars`.
 - `handlers/datadev.yml` — `reload datadev` (rmmod, daemon-reload, start/enable `datadev.service`; skipped if the node has no `datadev.service`), `apply sysctl` (`sysctl -p /etc/sysctl.d/90-daq.conf`) and `ipmi reset` (`ipmitool power reset`, after new firmware). Handlers run once at the end of the play, so the driver is reloaded once and the reset is always last.
 
-In `--check` mode the firmware step only prints the `updatePcieFpga.py` command it would run.
+In `--check` mode the firmware step runs `nodePcieFpga.py --check True`, which only reads the card: nodes that would be flashed show as `changed`, up-to-date nodes print `Firmware already installed`.
 
 ---
 
@@ -663,4 +671,4 @@ The aliases used in `srcf_manual.yml` and `firmware_update.yml` resolve as follo
 | `jungfrau` | `drp/Lcls2XilinxKcu1500Udp_10GbE-0x03040000-20250314213558-ruckman-5042731` |
 | `epix` | `drp/Lcls2XilinxKcu1500Pgp4_6Gbps-0x03080000-20240206001701-ruckman-9316db7` |
 
-The playbook appends `_primary.mcs` / `_secondary.mcs` is **not** done automatically — `updatePcieFpga.py` resolves the suffix internally based on the device slot.
+The aliases are base names. `nodePcieFpga.py` adds `_primary.mcs` / `_secondary.mcs` for two-PROM cards (SPIx8, KCU1500) or `.mcs` for single-PROM cards (SPIx4, e.g. C1100), depending on the PROM type read from the card.

@@ -21,7 +21,8 @@ pci_ids_dest: /usr/share/hwdata/pci.ids
 # Firmware: -e firmware=<alias> picks from this list, anything else is used as drp/<firmware>
 firmware_dir: /sdf/home/p/psrel/mcs
 firmware_setup: /sdf/home/x/xppopr/daq/scripts/setup_env.sh
-firmware_sw_dir: /sdf/home/p/psrel/git/pgp-pcie-apps/software
+# Next to the playbooks, the nodes read it from the same /sdf path
+firmware_script: "{{ playbook_dir }}/../scripts/nodePcieFpga.py"
 firmwares:
   hsd:         drp/DrpPgpIlv-0x05040300-20250811085728-weaver-846de54
   timing:      drp/DrpTDet-0x05040300-20250811085743-weaver-846de54

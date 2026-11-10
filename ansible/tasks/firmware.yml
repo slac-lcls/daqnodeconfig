@@ -1,4 +1,6 @@
-# Flashes the KCU firmware. The node is power-cycled at the end of the play if new firmware was written.
+# Flashes the KCU firmware with scripts/nodePcieFpga.py. The node is power-cycled at the end of the play
+# if new firmware was written. The script skips cards that already run the image ("Firmware already installed")
+# and exits non-zero on any error, so a failed update does not power-cycle the node.
 - name: Set firmware path
   ansible.builtin.set_fact:
     my_firm: "{{ firmwares[firmware] if firmware in firmwares else 'drp/' ~ firmware }}"
@@ -12,25 +14,49 @@
   ansible.builtin.set_fact:
     datadev: "{{ 'datadev_1' if datadev_1_stat.stat.exists else 'datadev_0' }}"
 
-# async tasks cannot run in --check mode, so a dry run only reports what would be flashed
-- name: Would update firmware (check mode)
-  ansible.builtin.debug:
-    msg: "Would run updatePcieFpga.py --dev /dev/{{ datadev }} --filename {{ firmware_dir }}/{{ my_firm }}"
+- name: Check firmware script exists
+  ansible.builtin.stat:
+    path: "{{ firmware_script }}"
+  register: firmware_script_stat
+
+- name: Stop if firmware script is missing
+  ansible.builtin.assert:
+    that: firmware_script_stat.stat.exists
+    fail_msg: "{{ firmware_script }} not found on {{ inventory_hostname }}, set -e firmware_script=..."
+    quiet: true
+
+# --check True only reads the card, so the dry run can tell which nodes would be flashed
+- name: Check if firmware needs an update (check mode)
+  ansible.builtin.shell:
+    cmd: >
+      source {{ firmware_setup }} ;
+      python {{ firmware_script }}
+      --dev /dev/{{ datadev }}
+      --filename {{ firmware_dir }}/{{ my_firm }}
+      --check True
+  register: firmware_check
+  check_mode: false
+  changed_when: "'firmware is different' in firmware_check.stdout"
   when: ansible_check_mode
 
+- name: Show firmware check output
+  ansible.builtin.debug:
+    msg: "{{ firmware_check.stdout_lines | select('search', 'current|new |already|different|ERROR') | list }}"
+  when: ansible_check_mode
+
+# Writing both PROMs takes about 4 minutes
 - name: Update firmware to {{ my_firm }}
   ansible.builtin.shell:
     cmd: >
       source {{ firmware_setup }} ;
-      cd {{ firmware_sw_dir }} ;
-      python ./scripts/updatePcieFpga.py
+      python {{ firmware_script }}
       --dev /dev/{{ datadev }}
       --filename {{ firmware_dir }}/{{ my_firm }}
       --rescan False
   register: firmware_log
-  async: 300
+  async: 600
   poll: 5
-  changed_when: "'Firmware already' not in (firmware_log.stdout | default(''))"
+  changed_when: "'Installing new firmware' in (firmware_log.stdout | default(''))"
   notify: ipmi reset
   when: not ansible_check_mode
 
