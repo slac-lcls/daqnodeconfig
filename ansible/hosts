@@ -156,6 +156,9 @@ drp-ued-cmp00[1:4]
 drp-srcf-cmp0[01:80]
 drp-srcf-mon0[01:19]
 
+[rowH]
+drp-srcf-cmp0[57:80]
+
 [test_drp]
 drp-srcf-cmp001
 drp-srcf-cmp002
