@@ -2,6 +2,8 @@
 # /etc/sysctl.conf is read after /etc/sysctl.d/90-daq.conf at boot, so an old copy of a DAQ setting
 # there (e.g. fs.mqueue.msg_max=64) silently wins over 90-daq.conf. Other lines, such as
 # kernel.core_pattern, are kept. A backup is made first.
+# If /etc/sysctl.d/99-sysctl.conf is a real file instead of the usual link to ../sysctl.conf and only
+# sets keys that are in 90-daq.conf, it is backed up and put back as the link.
 #
 # Nodes are only changed if their /etc/sysctl.d/90-daq.conf matches sysctl.conf on the controller;
 # run sysctlOnly_update.yml first on the others. Nothing is re-applied: add -e apply=true to run
@@ -20,6 +22,7 @@
   vars:
     required_vars: [host]
     sysctl_conf: /etc/sysctl.conf
+    sysctl_99: /etc/sysctl.d/99-sysctl.conf
     daq_keys: "{{ lookup('file', sysctl_src).splitlines() | map('trim') | reject('match', '^([#;].*)?$')
                   | map('regex_replace', '^\\s*([^=\\s]+)\\s*=.*$', '\\1') | list }}"
     # matches a whole line that sets one of daq_keys, including its newline
@@ -54,9 +57,54 @@
       when: daq_conf_ok
       register: sysctl_conf_cleanup
 
+    # /etc/sysctl.d/99-sysctl.conf is normally a link to ../sysctl.conf. On some nodes it is a real
+    # file, an old copy of the DAQ settings (e.g. with fs.mqueue.msg_max=64), read after 90-daq.conf.
+    # If it only sets keys that are in 90-daq.conf it is put back as the link; otherwise it is reported.
+    - name: Check /etc/sysctl.d/99-sysctl.conf
+      ansible.builtin.stat:
+        path: "{{ sysctl_99 }}"
+        follow: false
+      register: sysctl_99_stat
+      when: daq_conf_ok
+
+    - name: Read /etc/sysctl.d/99-sysctl.conf
+      ansible.builtin.slurp:
+        path: "{{ sysctl_99 }}"
+      register: sysctl_99_content
+      when: daq_conf_ok and sysctl_99_stat.stat.isreg | default(false)
+
+    - name: Find settings in 99-sysctl.conf that are not in 90-daq.conf
+      ansible.builtin.set_fact:
+        sysctl_99_extra: "{{ (sysctl_99_content.content | b64decode).splitlines() | map('trim')
+                             | reject('match', '^([#;].*)?$')
+                             | reject('match', '^(' ~ (daq_keys | map('regex_escape') | join('|')) ~ ')\\s*=') | list }}"
+      when: sysctl_99_content.content is defined
+
+    - name: "Skip: 99-sysctl.conf has settings that are not in 90-daq.conf, check by hand"
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}: {{ sysctl_99 }} left unchanged, it also sets {{ sysctl_99_extra }}"
+      when: sysctl_99_extra | default([]) | length > 0
+
+    - name: Back up 99-sysctl.conf
+      ansible.builtin.copy:
+        src: "{{ sysctl_99 }}"
+        dest: "{{ sysctl_99 }}.{{ now(fmt='%Y-%m-%d@%H:%M:%S') }}~"
+        remote_src: true
+        mode: preserve
+      when: sysctl_99_extra is defined and sysctl_99_extra | length == 0
+
+    - name: Put 99-sysctl.conf back as the link to ../sysctl.conf
+      ansible.builtin.file:
+        path: "{{ sysctl_99 }}"
+        src: ../sysctl.conf
+        state: link
+        force: true
+      when: sysctl_99_extra is defined and sysctl_99_extra | length == 0
+      register: sysctl_99_link
+
     - name: Apply all sysctl files
       ansible.builtin.command: sysctl --system
       when:
         - daq_conf_ok
         - apply | default(false) | bool
-        - sysctl_conf_cleanup is changed
+        - sysctl_conf_cleanup is changed or sysctl_99_link is changed
