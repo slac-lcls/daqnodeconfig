@@ -1,0 +1,102 @@
+# This playbook disables hyperthreading: it sets "SMT Control" to Disabled in the BIOS with Supermicro SUM,
+# run in-band on the node (files/bios_smt_off.xml), then restarts the node with 'ipmitool power reset'
+# as firmware_update.yml does. It then waits for the node to come back and checks that SMT is off.
+# Nodes that already run with SMT off (/sys/devices/system/cpu/smt/active = 0) are not touched.
+# Turning SMT back on needs a real power cycle, not a reset (BIOS help text).
+# Written for rowH (Supermicro H12SSW-NTR, BIOS 2.5); the same SUM command was run by hand on cmp057.
+#
+# how to run the script
+# ansible-playbook bios_smt_off.yml -K --check -e host=rowH
+# ansible-playbook bios_smt_off.yml -K -e host=drp-srcf-cmp058
+# ansible-playbook bios_smt_off.yml -K -e host=rowH
+
+# 2026-11-13: Initial version (Claude)
+---
+- hosts: "{{ host }}"
+  gather_facts: false
+  become: true
+
+  vars:
+    required_vars: [host]
+    sum_bin: /sdf/group/scs/tools/supermicro/sum_latest_Linux_x86_64/sum
+    # Next to the playbooks, the nodes read it from the same /sdf path
+    bios_patch: "{{ playbook_dir }}/files/bios_smt_off.xml"
+
+  tasks:
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+
+    - name: Read SMT state
+      ansible.builtin.command: cat /sys/devices/system/cpu/smt/active
+      register: smt_before
+      changed_when: false
+      check_mode: false
+
+    - name: SMT is already off, nothing to do
+      ansible.builtin.debug:
+        msg: "smt/active = 0, node left alone"
+      when: smt_before.stdout == '0'
+
+    - name: Skip nodes where SMT is already off
+      ansible.builtin.meta: end_host
+      when: smt_before.stdout == '0'
+
+    - name: Check SUM and the BIOS patch exist
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop: ["{{ sum_bin }}", "{{ bios_patch }}"]
+      register: needed_files
+
+    - name: Stop if SUM or the BIOS patch is missing
+      ansible.builtin.assert:
+        that: item.stat.exists
+        fail_msg: "{{ item.item }} not found on {{ inventory_hostname }}"
+        quiet: true
+      loop: "{{ needed_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: SMT would be disabled and the node reset (check mode)
+      ansible.builtin.debug:
+        msg: "smt/active = {{ smt_before.stdout }}: would run sum -c ChangeBiosCfg and ipmitool power reset"
+      when: ansible_check_mode
+
+    # The new setting is only used at the next boot
+    - name: Set SMT Control = Disabled in the BIOS
+      ansible.builtin.command: "{{ sum_bin }} -c ChangeBiosCfg --file {{ bios_patch }}"
+      register: sum_log
+
+    - name: Show SUM output
+      ansible.builtin.debug:
+        msg: "{{ sum_log.stdout_lines | default([]) }}"
+      when: not ansible_check_mode
+
+    # Started in the background so the task returns before the BMC resets the node and drops the ssh connection
+    - name: Restart the node (ipmitool power reset)
+      ansible.builtin.shell: sleep 2 ; ipmitool power reset
+      async: 60
+      poll: 0
+      when: not ansible_check_mode
+
+    # The ssh ControlMaster socket still points at the old session
+    - name: Drop the old ssh connection
+      ansible.builtin.meta: reset_connection
+
+    - name: Wait for the node to come back
+      ansible.builtin.wait_for_connection:
+        delay: 120
+        sleep: 15
+        timeout: 1200
+      when: not ansible_check_mode
+
+    - name: Read SMT state after the reset
+      ansible.builtin.command: cat /sys/devices/system/cpu/smt/active
+      register: smt_after
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Check SMT is off
+      ansible.builtin.assert:
+        that: smt_after.stdout == '0'
+        fail_msg: "smt/active = {{ smt_after.stdout }} after the reset, the BIOS change did not take effect"
+        success_msg: "SMT is off"
+      when: not ansible_check_mode

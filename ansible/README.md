@@ -40,6 +40,7 @@ Key groups:
 | `Jungfrau_rocky9_drp` | cmp056 | Jungfrau detector DRP node (also covered by `master_update --tags jungfrau`) |
 | `epix100_drp` | cmp031, 044 | ePix100 detector DRP nodes |
 | `rocky9` | cmp001–080, mon001–019 | All Rocky Linux 9 nodes |
+| `rowH` | cmp057–080 | Row H nodes |
 | `driver_drp` | cmp001–056 | Nodes requiring driver updates |
 
 ### `datadedev_version.txt`
@@ -210,6 +211,32 @@ The flashing is done by `../scripts/nodePcieFpga.py` (`firmware_script` in `grou
 
 It loads the axipcie/surf python packages from `AXIPCIE_CORE_DIR`, or from `/sdf/home/p/psrel/git/pgp-pcie-apps/firmware/submodules/axi-pcie-core`.
 To check one card by hand (reads only, no root needed): `python scripts/nodePcieFpga.py --dev /dev/datadev_1 --filename /sdf/home/p/psrel/mcs/drp/<image> --check True`.
+
+---
+
+### BIOS Playbook
+
+#### `bios_smt_off.yml` — Disable hyperthreading (SMT) in the BIOS
+Sets `Advanced > CPU Configuration > SMT Control = Disabled` with Supermicro SUM run in-band on the node (`sum -c ChangeBiosCfg --file files/bios_smt_off.xml`), then restarts the node with `ipmitool power reset`, waits for it to come back and checks `/sys/devices/system/cpu/smt/active` is 0. Nodes already running with SMT off are skipped. Written for rowH (Supermicro H12SSW-NTR, BIOS 2.5); the same SUM command was run by hand on cmp057.
+
+**Required variables:** `host`
+
+```bash
+ansible-playbook bios_smt_off.yml -K --check -e host=rowH   # lists the nodes that would be changed
+ansible-playbook bios_smt_off.yml -K -e host=rowH
+```
+
+Turning SMT back on needs a real power cycle (`ipmitool power cycle`), not a reset.
+
+#### `bios_smt_check.yml` — Check whether SMT is off
+Read-only. Reports per node `smt/active`, threads per core (`lscpu`) and the `SMT Control` value stored in the BIOS (`sum -c GetCurrentBiosCfg`), with a status: `OK` (off in BIOS and running system), `RESET NEEDED` (Disabled in the BIOS, node not restarted yet) or `NOT DONE`.
+
+**Required variables:** `host`
+
+```bash
+ansible-playbook bios_smt_check.yml -K -e host=rowH
+ansible-playbook bios_smt_check.yml -e host=rowH -e bios=false   # running system only, no sudo
+```
 
 ---
 

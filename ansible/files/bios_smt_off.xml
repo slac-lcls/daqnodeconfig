@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<BiosCfg>
+  <Menu name="Advanced">
+    <Menu name="CPU Configuration">
+      <Setting name="SMT Control" selectedOption="Disabled" type="Option"></Setting>
+    </Menu>
+  </Menu>
+</BiosCfg>

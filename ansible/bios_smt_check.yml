@@ -1,0 +1,61 @@
+# This playbook checks whether hyperthreading is off, i.e. whether bios_smt_off.yml worked. It changes nothing.
+# For each node it reports what the running kernel sees (/sys/devices/system/cpu/smt/active, threads per core)
+# and the "SMT Control" value stored in the BIOS, read in-band with Supermicro SUM:
+#   OK            SMT off in the BIOS and in the running system
+#   RESET NEEDED  SMT Control = Disabled in the BIOS, but the node has not been restarted since
+#   NOT DONE      SMT Control is still Auto/Enabled
+# Reading the BIOS needs root; -e bios=false skips it, then -K is not needed.
+#
+# how to run the script
+# ansible-playbook bios_smt_check.yml -K -e host=rowH
+# ansible-playbook bios_smt_check.yml -e host=rowH -e bios=false
+
+# 2026-11-13: Initial version (Claude)
+---
+- hosts: "{{ host }}"
+  gather_facts: false
+
+  vars:
+    required_vars: [host]
+    bios: true
+    sum_bin: /sdf/group/scs/tools/supermicro/sum_latest_Linux_x86_64/sum
+    bios_dump: /tmp/bios_smt_check.xml
+
+  tasks:
+    - ansible.builtin.import_tasks: tasks/preflight.yml
+
+    - name: Read SMT state of the running system
+      ansible.builtin.shell: |
+        cat /sys/devices/system/cpu/smt/active
+        lscpu | awk -F: '/^Thread\(s\) per core/ {gsub(/ /, "", $2); print $2}'
+      register: smt_runtime
+      changed_when: false
+      check_mode: false
+
+    - name: Read SMT Control from the BIOS
+      ansible.builtin.shell: |
+        {{ sum_bin }} -c GetCurrentBiosCfg --file {{ bios_dump }} --overwrite > /dev/null
+        sed -n 's/.*<Setting name="SMT Control" selectedOption="\([^"]*\)".*/\1/p' {{ bios_dump }}
+        rm -f {{ bios_dump }}
+      register: smt_bios
+      become: true
+      changed_when: false
+      check_mode: false
+      failed_when: smt_bios.rc != 0 or smt_bios.stdout | length == 0
+      when: bios | bool
+
+    - name: SMT status
+      ansible.builtin.debug:
+        msg: >-
+          {{ status }}: smt/active={{ smt_active }}, threads per core={{ threads }},
+          BIOS SMT Control={{ bios_value }}
+      vars:
+        smt_active: "{{ smt_runtime.stdout_lines[0] }}"
+        threads: "{{ smt_runtime.stdout_lines[1] | default('?') }}"
+        bios_value: "{{ smt_bios.stdout | default('not read') }}"
+        status: >-
+          {%- if bios_value == 'Disabled' and smt_active == '0' -%} OK
+          {%- elif bios_value == 'Disabled' -%} RESET NEEDED
+          {%- elif bios_value == 'not read' -%} {{ 'OK' if smt_active == '0' else 'NOT DONE' }}
+          {%- else -%} NOT DONE
+          {%- endif -%}
